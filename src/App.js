@@ -1,5 +1,3 @@
-// src/App.js
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -15,7 +13,12 @@ import TestListingPage from './pages/TestListingPage';
 import TestDetailPage from './pages/TestDetailPage'; 
 import CartPage from './pages/CartPage'; 
 import CheckoutPage from './pages/CheckoutPage'; 
-import OrderConfirmationPage from './pages/OrderConfirmationPage'; // 👈 NEW IMPORT
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
+import DashboardPage from './pages/DashboardPage'; 
+
+// 🆕 NEW ORDER PAGES
+import OrderHistoryPage from './pages/OrderHistoryPage'; 
+import OrderDetailPage from './pages/OrderDetailPage'; // ⬅️ Corrected: Direct import from its own file
 
 // Import global styles
 import './App.css'; 
@@ -41,7 +44,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 /**
- * 2. RedirectIfLoggedIn: Guards public entry pages. Redirects LOGGED IN users to the homepage (/).
+ * 2. RedirectIfLoggedIn: Guards public entry pages. Redirects LOGGED IN users to the dashboard.
  */
 const RedirectIfLoggedIn = ({ children }) => {
   const { currentUser, loading } = useAuth();
@@ -51,32 +54,15 @@ const RedirectIfLoggedIn = ({ children }) => {
   }
   
   if (currentUser) {
-    return <Navigate to="/" replace />;
+    // If logged in, redirect to the Dashboard
+    return <Navigate to="/dashboard" replace />; 
   }
   return children;
 };
 
 
-// --- PAGES (Placeholder/Functional components) ---
+// --- PAGES (Functional components) ---
 
-const DashboardPage = () => {
-    const { currentUser, logout } = useAuth();
-    
-    return (
-        <div className="dashboard-container">
-            <header className="app-header">
-                <h1>PiiderLab Dashboard</h1>
-                <nav>
-                    <button onClick={logout} className="header-button secondary-button">Logout</button>
-                </nav>
-            </header>
-            <div className="dashboard-content">
-                <h2>Welcome, {currentUser ? currentUser.fullName || currentUser.email : 'User'}</h2>
-                <p>This is your secure Dashboard.</p>
-            </div>
-        </div>
-    );
-};
 const NotFoundPage = () => <h1 className="not-found">404 | Page Not Found</h1>;
 
 
@@ -110,7 +96,7 @@ const AppRoutes = () => {
         element={<CartPage />} 
       />
 
-      {/* SECURE ROUTES for Booking/Checkout */}
+      {/* SECURE ROUTES for Booking/Checkout and History */}
       <Route 
         path="/checkout" 
         element={
@@ -119,7 +105,6 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
-      {/* 👇 NEW PROTECTED ROUTE for Order Confirmation */}
       <Route 
         path="/order-confirmation" 
         element={
@@ -129,13 +114,7 @@ const AppRoutes = () => {
         } 
       />
       
-      {/* The root path ("/") is the homepage */}
-      <Route 
-        path="/" 
-        element={<HomePage />} 
-      />
-      
-      {/* Dashboard is another protected route */}
+      {/* Dashboard is a protected route */}
       <Route 
         path="/dashboard" 
         element={
@@ -144,6 +123,33 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
+
+      {/* 🆕 ORDER HISTORY ROUTES */}
+      <Route 
+        path="/orders" 
+        element={
+          <ProtectedRoute>
+            <OrderHistoryPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/orders/:orderId" 
+        element={
+          <ProtectedRoute>
+            <OrderDetailPage />
+          </ProtectedRoute>
+        } 
+      />
+      {/* TODO: Add a /reports/:reportId route for report viewing */}
+
+      
+      {/* The root path ("/") is the homepage */}
+      <Route 
+        path="/" 
+        element={<HomePage />} 
+      />
+      
       
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

@@ -1,92 +1,121 @@
-/* src/pages/TestDetailPage.css */
+/* src/pages/TestDetailPage.css - PREMIUM & MODERN UI/UX */
 
 :root {
-    --primary-color: #f77f00; 
-    --secondary-color: #003049; 
-    --background-color: #f0f2f5; 
-    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --primary-color: #0077b6; /* Deep Blue - Action/Accent */
+    --secondary-color: #03045e; /* Navy/Dark Blue - Headings/Text */
+    --accent-color: #f77f00; /* Warm Orange - Highlight/Badges */
+    --background-color: #f5f7fa; /* Subtle page background */
+    --card-shadow: 0 10px 30px rgba(3, 4, 94, 0.08); 
+    --text-color: #333333;
+}
+
+body {
+    background-color: var(--background-color);
 }
 
 .detail-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-    background-color: white; /* White background for the main content area */
+    padding: 30px 20px;
     min-height: 100vh;
 }
 
 .detail-header {
-    margin-bottom: 25px;
-    border-bottom: 2px solid var(--background-color);
-    padding-bottom: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e0e4eb;
 }
 
 .detail-header h1 {
     color: var(--secondary-color);
-    font-size: 2.5rem;
+    font-size: 3rem;
+    font-weight: 800;
     margin: 10px 0 0;
+    letter-spacing: -0.5px;
+}
+
+.test-alias {
+    font-size: 1.05rem;
+    color: #6c757d;
+    margin-top: 5px;
 }
 
 .back-link {
     color: var(--primary-color);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
-    transition: opacity 0.2s;
-}
-
-.back-link:hover {
-    opacity: 0.8;
+    display: block;
+    width: fit-content;
+    transition: color 0.3s;
 }
 
 .test-detail-content {
     display: flex;
-    gap: 30px;
+    gap: 40px;
     margin-top: 30px;
 }
 
+/* --- Main Info Card (Sticky Side Panel) --- */
 .main-info-card {
-    flex: 1; /* Takes up one part of the space */
+    flex: 1; 
     background: #ffffff;
     padding: 30px;
     border-radius: 12px;
     box-shadow: var(--card-shadow);
     height: fit-content;
     position: sticky;
-    top: 20px; /* Make it stick near the top */
+    top: 30px; 
 }
 
 .sections-container {
-    flex: 2; /* Takes up two parts of the space for main content */
+    flex: 2; 
 }
 
-.test-description {
-    font-size: 1.1rem;
-    color: #555;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
-}
-
-/* Price Box */
+/* Price Box & Social Proof */
 .price-box {
     display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.price-info {
+    display: flex;
     align-items: flex-end;
-    margin-bottom: 25px;
 }
 
 .current-price {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 3.5rem;
+    font-weight: 800;
     color: var(--primary-color);
     margin-right: 15px;
+    line-height: 1;
 }
 
 .mrp-price {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #999;
     text-decoration: line-through;
+    margin-bottom: 5px; 
+}
+
+.social-proof {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    padding: 8px 15px;
+    border-radius: 20px;
+    background-color: #fff9f0;
+    border: 1px solid #fde6c4;
+    font-weight: 600;
+    align-self: center;
+    white-space: nowrap;
+}
+.social-proof strong {
+    margin-right: 5px;
+    color: var(--secondary-color);
 }
 
 /* Action Row (Buttons) */
@@ -94,100 +123,243 @@
     display: flex;
     gap: 15px;
     margin-bottom: 30px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 25px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #e0e4eb;
 }
 
+.primary-button, .secondary-button {
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+    border: none;
+}
+/* Reusing button styles from existing CSS */
 .add-to-cart-btn-lg {
-    flex: 1;
-    padding: 15px 25px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    flex: 2; 
+    padding: 18px 25px;
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
 }
 
 .view-cart-btn {
-    padding: 15px;
-    font-size: 1rem;
+    flex: 1;
+    padding: 18px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-/* Quick Facts */
-.quick-facts {
+
+/* --- New: Promo Offers Section --- */
+.promo-offers {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f0f7ff; 
+    border: 1px dashed #cce0ff;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
+    gap: 10px;
+}
+
+.promo-offers .promo-heading {
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.promo-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+.promo-item strong {
+    font-weight: 700;
+    color: var(--secondary-color);
+}
+.promo-item strong span {
+    margin-right: 5px;
+    color: var(--accent-color);
+}
+
+
+/* Quick Facts / Trust Markers */
+.facts-heading {
+    font-size: 1.3rem;
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e4eb;
+}
+
+.quick-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 15px;
+    padding-top: 10px;
 }
 
 .fact-item {
     font-size: 0.95rem;
-    color: #333;
+    color: #444;
+    padding: 12px;
+    border-radius: 6px;
+    background-color: #f7f9fc;
+    border-left: 3px solid var(--accent-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
 }
 
 .fact-item strong {
     font-weight: 700;
-    margin-right: 5px;
+    color: var(--secondary-color);
+    margin-bottom: 3px;
+    font-size: 1rem;
 }
 
-/* Detail Sections */
+
+/* --- Detail Sections (Main Content) --- */
 .detail-section {
     background: #ffffff;
-    padding: 25px;
+    padding: 30px;
     border-radius: 12px;
     box-shadow: var(--card-shadow);
-    margin-bottom: 25px;
-    border-left: 5px solid var(--primary-color);
+    margin-bottom: 30px;
+    border-left: 5px solid var(--primary-color); /* Primary highlight border */
 }
 
 .detail-section h2 {
     color: var(--secondary-color);
-    font-size: 1.6rem;
+    font-size: 2rem;
+    font-weight: 700;
     margin-top: 0;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #e0e4eb;
 }
 
 .detail-section p {
-    line-height: 1.7;
+    line-height: 1.8;
     color: #444;
+    font-size: 1.05rem;
 }
 
-.included-tests-list {
+/* Included Tests List & Preparation/Why Lists */
+.included-tests-list, .preparation-list, .why-take-list {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two columns for markers */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
     gap: 15px;
 }
+.preparation-list, .why-take-list {
+    grid-template-columns: 1fr; /* Single column for lists of steps/reasons */
+    gap: 10px;
+}
 
-.included-tests-list li {
-    background: #f9f9f9;
-    padding: 12px;
+.included-tests-list li, .preparation-list li, .why-take-list li {
+    background: #fcfcfc;
+    padding: 15px;
     border-radius: 8px;
-    border-left: 3px solid var(--primary-color);
+    border: 1px solid #eee;
     line-height: 1.5;
     font-size: 0.95rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    border-left: 5px solid var(--accent-color); 
+}
+.preparation-list li {
+    border-left-color: #00b4d8; /* Different color for prep list */
+}
+.why-take-list li {
+    border-left-color: #43aa8b; /* Different color for why list */
 }
 
 .included-tests-list li strong {
     color: var(--secondary-color);
-    font-weight: 600;
+    font-weight: 700;
     display: block;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
 }
+
+
+/* --- Results/Interpretation Table --- */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    border: 1px solid #e0e4eb;
+    border-radius: 8px;
+    overflow: hidden; 
+}
+
+.results-table th, .results-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.results-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.results-table tbody tr:nth-child(even) {
+    background-color: #f7f9fc;
+}
+
+.results-table tbody tr:hover {
+    background-color: #e6f7ff; 
+}
+
 
 /* Media Query for smaller screens */
 @media (max-width: 900px) {
     .test-detail-content {
         flex-direction: column;
+        gap: 20px;
     }
 
     .main-info-card {
-        position: static; /* Remove sticky on mobile */
+        position: static; 
+        padding: 20px;
+    }
+    
+    .detail-header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .current-price {
+        font-size: 2.5rem;
     }
 
+    .price-box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .social-proof {
+        margin-top: 15px;
+    }
+
+    .quick-facts {
+        grid-template-columns: 1fr; 
+    }
+    
+    .action-row {
+        flex-direction: column;
+    }
+    
     .included-tests-list {
-        grid-template-columns: 1fr; /* One column on mobile */
+        grid-template-columns: 1fr; 
     }
 }

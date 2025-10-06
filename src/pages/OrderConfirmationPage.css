@@ -1,11 +1,14 @@
 /* src/pages/OrderConfirmationPage.css */
 
 :root {
-    --primary-color: #f77f00; 
-    --secondary-color: #003049; 
     --success-color: #28a745; 
-    --background-color: #f8f9fa;
-    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+     --primary-color: #0077b6; /* Deep Blue - Action/Accent */
+    --secondary-color: #03045e; /* Navy/Dark Blue - Headings/Text */
+    --accent-color: #f77f00; /* Warm Orange - Highlight/Badges */
+    --background-color: #f5f7fa; /* Subtle page background */
+    --card-shadow: 0 10px 30px rgba(3, 4, 94, 0.08); 
+    --text-color: #333333;
 }
 
 .confirmation-container {

@@ -25,6 +25,18 @@ const HomePage = () => {
         .catch(error => console.error("Logout error:", error));
   } 
 
+   const handleDetailsClick = (testId) => {
+          // Find the full test object to get its slug
+          const testToView = MOCK_TESTS.find(t => t.id === testId);
+          
+          if (testToView && testToView.slug) {
+              // Navigate to the dynamic route using the slug
+              navigate(`/tests/${testToView.slug}`);
+          } else {
+              console.error(`Test with ID ${testId} not found or is missing a slug.`);
+          }
+      };
+
   const handleSearch = (e) => {
       e.preventDefault();
       // Temporarily navigate to /tests with search query
@@ -131,6 +143,8 @@ const HomePage = () => {
                       key={test.id} 
                       test={test} 
                       onAddToCart={handleAddToCart}
+                       onDetailsClick={handleDetailsClick} 
+                        
                   />
               ))}
           </div>

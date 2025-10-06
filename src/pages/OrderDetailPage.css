@@ -1,0 +1,300 @@
+/* src/pages/OrderDetailPage.css */
+
+:root {
+    --primary-color: #0056b3; /* Deeper Blue */
+     --secondary-color: #03045e; /* Light Grey Blue */
+    --text-dark: #2c3e50;
+    --text-medium: #5a7d9a;
+    --border-light: #e0e6ec;
+    --shadow-soft: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.order-detail-container {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- HEADER & STATUS --- */
+
+.order-detail-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-light);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.order-detail-header div {
+    display: flex;
+    flex-direction: column;
+}
+
+.order-detail-header h1 {
+    font-size: 2.5em;
+    color: var(--primary-color);
+    margin: 0;
+    font-weight: 700;
+}
+
+.order-detail-header p {
+    font-size: 0.9em;
+    color: var(--text-medium);
+    margin-top: 5px;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: var(--text-medium);
+    cursor: pointer;
+    font-size: 1em;
+    padding: 5px 0;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.back-button:hover {
+    color: var(--primary-color);
+}
+
+/* Status Badge Animation & Style */
+.status-badge {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+/* Status Colors */
+.status-badge.complete {
+    background-color: #e6f7e9; color: #28a745;
+    animation: none; /* Stop pulsing when complete */
+}
+.status-badge.pending {
+    background-color: #fff8e1; color: #ff9800; /* Amber for pending/confirmed */
+}
+.status-badge.in-progress {
+    background-color: #eaf4ff; color: var(--primary-color);
+}
+.status-badge.canceled {
+    background-color: #f8d7da; color: #dc3545;
+    animation: none; /* Stop pulsing when canceled */
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 86, 179, 0.4); }
+    70% { box-shadow: 0 0 0 5px rgba(0, 86, 179, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 86, 179, 0); }
+}
+
+
+/* --- LAYOUT GRID --- */
+
+.order-detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; 
+    gap: 30px;
+}
+
+.detail-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.detail-card h2 {
+    font-size: 1.6em;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 10px;
+    font-weight: 600;
+}
+
+/* --- DETAIL GROUPS --- */
+.detail-group {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-light);
+}
+.detail-group:last-child {
+    border-bottom: none;
+}
+.detail-group p {
+    margin: 12px 0;
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-size: 1.05em;
+}
+.detail-group p strong {
+    color: var(--primary-color);
+}
+.detail-group h3 {
+    font-size: 1.2em;
+    color: var(--text-dark);
+    margin: 15px 0 10px;
+    font-weight: 600;
+}
+
+/* --- ITEM LIST --- */
+.item-list {
+    margin-bottom: 25px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+}
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.95em;
+}
+.item-row:last-child {
+    border-bottom: none;
+}
+
+.item-name {
+    flex-grow: 1;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+.item-quantity {
+    width: 60px;
+    text-align: right;
+    color: var(--text-medium);
+}
+.item-price {
+    width: 80px;
+    text-align: right;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+
+/* --- PRICE BREAKDOWN --- */
+.price-breakdown {
+    padding-top: 15px;
+}
+.price-breakdown p {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 1.05em;
+    color: var(--text-dark);
+}
+.price-breakdown p span:first-child {
+    font-weight: 500;
+}
+
+.price-breakdown .total-row {
+    font-size: 1.3em;
+    padding: 15px 0;
+    margin-top: 15px;
+    border-top: 3px double var(--border-light);
+    color: var(--text-dark);
+    font-weight: 700;
+}
+.price-breakdown .total-row span:last-child {
+    color: #28a745; /* Success Green for Total */
+}
+.price-breakdown .payment-method {
+    font-size: 0.9em;
+    color: var(--text-medium);
+    margin-top: 15px;
+    text-align: center;
+}
+
+
+/* --- BUTTONS --- */
+
+.download-btn, .reschedule-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 25px;
+    font-weight: 600;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.download-btn {
+    background: linear-gradient(45deg, #28a745, #1e7e34);
+    color: white;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
+}
+.download-btn:hover {
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.6);
+    transform: translateY(-2px);
+}
+
+.reschedule-btn {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+.reschedule-btn:hover:not(:disabled) {
+    background-color: #d1e7ff;
+    transform: translateY(-1px);
+}
+.reschedule-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--secondary-color);
+    border-color: #ccc;
+    color: #999;
+}
+
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+    .order-detail-container {
+        padding: 10px;
+    }
+
+    .order-detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-detail-header h1 {
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+
+    .status-badge {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .order-detail-grid {
+        grid-template-columns: 1fr; /* Stack the cards vertically */
+        gap: 20px;
+    }
+
+    /* Reverse the order on mobile so the Summary appears under Booking details */
+    .summary-card {
+        order: 1;
+    }
+    .booking-card {
+        order: 2;
+    }
+}
