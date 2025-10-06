@@ -11,6 +11,7 @@
     --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+/* Global Container and Font */
 .dashboard-container {
     font-family: 'Inter', sans-serif;
     background-color: var(--background-color);
@@ -31,286 +32,422 @@
 }
 
 .dashboard-header h1 {
+    font-size: 2.2em;
     color: var(--secondary-color);
-    font-size: 2.2rem;
     margin: 0;
-    font-weight: 700;
+    font-weight: 800;
 }
 
-.dashboard-header .subtext {
+.dashboard-header p {
     color: #6c757d;
-    font-size: 1.05rem;
     margin-top: 5px;
 }
 
-/* --- Buttons --- */
-.primary-button, .secondary-button {
+.logout-button {
+    background-color: #e74c3c;
+    border: none;
+    color: white;
     padding: 10px 20px;
     border-radius: 8px;
-    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    box-shadow: var(--shadow-light);
 }
 
-.primary-button {
+.logout-button:hover {
+    background-color: #c0392b;
+}
+
+/* --- MAIN LAYOUT (Menu + Content) --- */
+.dashboard-grid-layout {
+    display: grid;
+    /* Desktop: 280px sidebar, 1fr for content */
+    grid-template-columns: 280px 1fr; 
+    gap: 30px;
+    align-items: flex-start;
+}
+
+
+/* --- LEFT: NAVIGATION MENU (Sidebar) --- */
+.dashboard-menu {
+    background-color: var(--card-bg);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-strong);
+    position: sticky; /* Keep menu visible while scrolling content */
+    top: 30px;
+    /* Visual accent for separation */
+    border-right: 4px solid var(--primary-color); 
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 14px 15px;
+    margin-bottom: 8px;
+    border: none;
+    border-radius: 8px;
+    background-color: transparent;
+    text-align: left;
+    font-size: 1.05em;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.menu-item:hover {
+    background-color: #e9f5ff;
+    color: var(--primary-color);
+}
+
+.menu-item.active {
     background-color: var(--primary-color);
     color: white;
-    border: none;
+    box-shadow: 0 4px 10px rgba(0, 119, 182, 0.4);
+}
+.menu-item.active .menu-icon {
+    color: white;
 }
 
-.primary-button:hover {
-    background-color: #005f93;
-    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
-}
-
-.secondary-button {
-    background-color: var(--card-bg);
+.menu-icon {
+    font-size: 1.2em;
+    margin-right: 15px;
     color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-}
-
-.secondary-button:hover {
-    background-color: #e6f7ff;
-}
-
-.logout-btn {
-    font-size: 0.9rem;
-    padding: 8px 15px;
-    background-color: #dc3545;
-}
-.logout-btn:hover {
-    background-color: #c82333;
+    transition: color 0.2s;
 }
 
 
-/* --- Grid Layout --- */
-.dashboard-grid {
+/* --- RIGHT: CONTENT AREA --- */
+.dashboard-content {
+    min-height: 60vh;
+}
+
+/* Summary View Grid */
+.dashboard-summary-grid {
     display: grid;
+    /* Default is 3 columns for desktop */
+    grid-template-columns: repeat(3, 1fr); 
     gap: 30px;
-    grid-template-columns: 1fr 1fr; /* Default: Two columns */
 }
 
-/* Adjust for larger screens */
-@media (min-width: 1024px) {
-    .dashboard-grid {
-        grid-template-columns: 2fr 3fr 3fr; /* Profile | Upcoming | Report/History */
-        grid-template-areas: 
-            "profile upcoming recent"
-            "profile history history";
-    }
-    .profile-card { grid-area: profile; }
-    .upcoming-card { grid-area: upcoming; }
-    .report-card { grid-area: recent; }
-    .history-card { grid-area: history; }
-}
-
-/* --- Card Styles --- */
+/* Card Styling */
 .dashboard-card {
     background-color: var(--card-bg);
     padding: 25px;
     border-radius: 12px;
-    box-shadow: var(--shadow-strong);
-    transition: transform 0.3s ease;
-    border-left: 5px solid var(--primary-color);
+    box-shadow: 0 5px 20px rgba(0, 51, 80, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 51, 80, 0.15);
 }
 
 .dashboard-card h2 {
+    font-size: 1.4em;
     color: var(--secondary-color);
-    font-size: 1.5rem;
     margin-top: 0;
     margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
     padding-bottom: 10px;
+    font-weight: 700;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-/* --- Profile Card Specifics --- */
-.profile-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-.profile-info p {
-    margin: 8px 0;
-    color: var(--text-color);
-    font-size: 0.95rem;
-}
-.quick-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+/* Specific Card Layouts */
+.upcoming-card {
+    grid-column: span 2; 
+    border-left: 5px solid var(--accent-color);
 }
 
-/* --- Booking and Report Details --- */
-.booking-details, .report-details {
+.report-card {
+    grid-column: span 1;
+    border-left: 5px solid var(--primary-color);
+}
+
+.quick-stats-card {
+    grid-column: span 3;
+    background-color: #e9f5ff; /* Light blue background */
+    border: 1px solid #d4e8ff;
+    display: flex;
+    flex-direction: column;
+}
+.quick-stats-card:hover {
+    transform: none; /* No lift effect on the full-width stats card */
+    box-shadow: 0 5px 20px rgba(0, 51, 80, 0.08);
+}
+
+
+/* Stats Grid */
+.stat-grid {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.stat-item {
+    text-align: center;
     padding: 15px;
-    background-color: #f7f9fc;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    background-color: white;
+}
+.stat-item:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+}
+.stat-item h3 {
+    font-size: 2em;
+    margin: 0 0 5px 0;
+    color: var(--accent-color);
+    font-weight: 900;
+}
+.stat-item p {
+    margin: 0;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* --- Section Content for Addresses/Family --- */
+.section-content-wrapper {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-strong);
+}
+
+.section-title {
+    font-size: 1.8em;
+    color: var(--secondary-color);
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+.section-description {
+    color: #6c757d;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e4eb;
+}
+
+.profile-list-container {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding-right: 10px;
+}
+.empty-profile-state {
+    text-align: center;
+    color: #999;
+    padding: 30px;
+    border: 1px dashed #ccc;
     border-radius: 8px;
 }
 
-.test-name {
-    color: var(--accent-color);
-    font-size: 1.3rem;
-    margin: 10px 0;
-}
-
-.booking-info p {
-    margin: 6px 0;
-    font-size: 0.9rem;
-}
-
-.cta-button {
-    margin-top: 15px;
+.add-btn {
     width: 100%;
+    margin-top: 15px;
+    background-color: var(--primary-color);
+    padding: 12px;
 }
 
-/* --- Status Badges --- */
+/* Profile List Items */
+.profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.profile-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+.profile-item p {
+    margin: 0;
+    font-size: 1em;
+    color: var(--text-color);
+    flex-grow: 1;
+    padding-left: 15px;
+}
+.address-text {
+    font-weight: 500;
+}
+.member-info strong {
+    color: var(--primary-color);
+}
+.label-badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.8em;
+    font-weight: 700;
+    background-color: var(--accent-color);
+    color: white;
+    white-space: nowrap;
+}
+
+.item-actions { margin-left: auto; display: flex; gap: 5px;}
+.item-actions button {
+    background: none;
+    border: 1px solid #ddd;
+    color: var(--primary-color);
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 0.85em;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+.item-actions button:hover {
+    background-color: #e9f5ff;
+}
+.item-actions .delete-btn { 
+    color: #e74c3c; 
+    border-color: #e74c3c;
+}
+.item-actions .delete-btn:hover {
+    background-color: #fdeaea;
+}
+
+
+/* --- MODAL STYLES --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+    backdrop-filter: blur(3px);
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    width: 90%; max-width: 500px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.modal-content h3 {
+    color: var(--secondary-color);
+    margin-top: 0;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.profile-form input, .profile-form textarea {
+    width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;
+}
+
+.form-actions {
+    display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;
+}
+
+/* Helper Class */
 .status-badge {
     display: inline-block;
     padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.85rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    white-space: nowrap;
 }
+.status-badge.pending { background-color: #fff3cd; color: #856404; }
+.status-badge.confirmed { background-color: #d1ecf1; color: #0c5460; }
+.status-badge.complete { background-color: #e6f7e9; color: #28a745; }
 
-.pending-status {
-    background-color: #ffc107; /* Yellow */
-    color: #333;
-}
 
-.complete-status {
-    background-color: #28a745; /* Green */
-    color: white;
-}
+/* --- RESPONSIVENESS --- */
 
-/* --- History Card --- */
-.history-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.history-links li {
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-.history-links li:last-child {
-    border-bottom: none;
-}
-.link-text {
-    color: var(--primary-color);
-    cursor: pointer;
-    font-weight: 500;
-}
-.link-text:hover {
-    text-decoration: underline;
-}
-
-/* --- States --- */
-.loading-state, .error-state {
-    text-align: center;
-    padding: 50px;
-    font-size: 1.2rem;
-    color: var(--secondary-color);
-}
-.error-state {
-    color: #dc3545;
-    background-color: #ffeaea;
-    border: 1px solid #dc3545;
-    border-radius: 8px;
-}
-
-/* --- Mobile Responsiveness --- */
-@media (max-width: 1023px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr; /* Single column layout on mobile */
+@media (max-width: 1024px) {
+    /* Tablet layout: Menu takes up the top, Content is full width below */
+    .dashboard-grid-layout {
+        grid-template-columns: 1fr; 
+        gap: 20px;
     }
+    
+    .dashboard-menu {
+        position: static;
+        border-right: none;
+        border-bottom: 4px solid var(--primary-color);
+        padding: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center; /* Center items when they wrap */
+    }
+    .menu-item {
+        width: 48%; /* Two items per row */
+        margin-bottom: 5px;
+        justify-content: center;
+    }
+    
+    .dashboard-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .upcoming-card, .quick-stats-card {
+        grid-column: span 2;
+    }
+    .report-card {
+        grid-column: span 1;
+    }
+    .profile-list-container {
+        max-height: 250px;
+    }
+}
 
+@media (max-width: 768px) {
     .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
     }
-    .logout-btn {
+    .logout-button {
         margin-top: 15px;
+        width: 100%;
     }
-    .dashboard-header h1 {
-        font-size: 1.8rem;
+
+    .dashboard-summary-grid {
+        grid-template-columns: 1fr; /* Single column on mobile */
     }
-}
-
-/* Assumes existing base styles from your previous file */
-
-/* --- NEW GRID LAYOUT --- */
-.dashboard-grid {
-    display: grid;
-    /* 3 columns: 1 wide (span 2 slots), 1 standard (span 1 slot) */
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 25px;
-    margin-top: 25px;
-}
-
-.dashboard-card {
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0, 51, 80, 0.08); /* Darker shadow for depth */
-}
-
-/* Make the Upcoming card span two columns */
-.upcoming-card {
-    grid-column: span 2; 
-    border-left: 5px solid var(--primary-color, #f77f00);
-}
-
-/* Make the Links/History Card span all three columns (sits at the bottom) */
-.links-card {
-    grid-column: span 3;
-    /* Optional: Remove shadow and make it blend slightly more */
-    box-shadow: none; 
-    border: 1px solid #e0e0e0; 
-    background-color: #f9f9f9;
-}
-
-/* Grid for the quick actions within the links card */
-.quick-actions-grid {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.action-btn {
-    flex-grow: 1;
-    min-width: 200px;
-    padding: 15px 20px;
-}
-
-/* Status Badges */
-.status-badge {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-.pending-status, .confirmed-status {
-    background-color: #fff3cd; /* Yellow/Orange */
-    color: #856404;
-}
-.complete-status {
-    background-color: #d4edda; /* Green */
-    color: #155724;
-}
-
-/* Mobile Layout */
-@media (max-width: 992px) {
-    .dashboard-grid {
-        /* Collapse to a single column for smaller screens */
-        grid-template-columns: 1fr;
+    .upcoming-card, .report-card, .quick-stats-card {
+        grid-column: span 1;
     }
-    .upcoming-card, .links-card {
-        grid-column: span 1; /* Reset span for mobile */
+    .stat-grid {
+        flex-direction: column;
+    }
+    
+    .menu-item {
+        width: 100%; /* Single item per row on smaller mobile */
+    }
+
+    /* Adjust list item layout for small screens */
+    .profile-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px;
+    }
+    .profile-item p {
+        padding-left: 0;
+        margin: 5px 0;
+    }
+    .label-badge {
+        margin-bottom: 10px;
+    }
+    .item-actions {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+        justify-content: space-between;
+    }
+    .item-actions button {
+        flex-grow: 1;
+        margin-left: 0;
+        text-align: center;
     }
 }
