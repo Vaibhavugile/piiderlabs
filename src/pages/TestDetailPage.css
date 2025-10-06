@@ -1,0 +1,193 @@
+/* src/pages/TestDetailPage.css */
+
+:root {
+    --primary-color: #f77f00; 
+    --secondary-color: #003049; 
+    --background-color: #f0f2f5; 
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white; /* White background for the main content area */
+    min-height: 100vh;
+}
+
+.detail-header {
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--background-color);
+    padding-bottom: 15px;
+}
+
+.detail-header h1 {
+    color: var(--secondary-color);
+    font-size: 2.5rem;
+    margin: 10px 0 0;
+}
+
+.back-link {
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.back-link:hover {
+    opacity: 0.8;
+}
+
+.test-detail-content {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.main-info-card {
+    flex: 1; /* Takes up one part of the space */
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    height: fit-content;
+    position: sticky;
+    top: 20px; /* Make it stick near the top */
+}
+
+.sections-container {
+    flex: 2; /* Takes up two parts of the space for main content */
+}
+
+.test-description {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Price Box */
+.price-box {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 25px;
+}
+
+.current-price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-right: 15px;
+}
+
+.mrp-price {
+    font-size: 1.1rem;
+    color: #999;
+    text-decoration: line-through;
+}
+
+/* Action Row (Buttons) */
+.action-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 25px;
+}
+
+.add-to-cart-btn-lg {
+    flex: 1;
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.view-cart-btn {
+    padding: 15px;
+    font-size: 1rem;
+}
+
+/* Quick Facts */
+.quick-facts {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.fact-item {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.fact-item strong {
+    font-weight: 700;
+    margin-right: 5px;
+}
+
+/* Detail Sections */
+.detail-section {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 25px;
+    border-left: 5px solid var(--primary-color);
+}
+
+.detail-section h2 {
+    color: var(--secondary-color);
+    font-size: 1.6rem;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-section p {
+    line-height: 1.7;
+    color: #444;
+}
+
+.included-tests-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns for markers */
+    gap: 15px;
+}
+
+.included-tests-list li {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-color);
+    line-height: 1.5;
+    font-size: 0.95rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.included-tests-list li strong {
+    color: var(--secondary-color);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 3px;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 900px) {
+    .test-detail-content {
+        flex-direction: column;
+    }
+
+    .main-info-card {
+        position: static; /* Remove sticky on mobile */
+    }
+
+    .included-tests-list {
+        grid-template-columns: 1fr; /* One column on mobile */
+    }
+}

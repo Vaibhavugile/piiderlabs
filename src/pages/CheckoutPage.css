@@ -1,0 +1,332 @@
+/* src/pages/CheckoutPage.css */
+
+:root {
+    --primary-color: #f77f00; /* PiiderLab Orange */
+    --secondary-color: #003049; /* Dark Blue/Navy */
+    --accent-color: #007bff; /* Blue for links/actions */
+    --error-color: #dc3545;
+    --success-color: #28a745;
+    --card-bg: #ffffff;
+    --light-gray: #e9ecef;
+}
+
+.checkout-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: var(--light-gray);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.checkout-header h1 {
+    text-align: center;
+    color: var(--secondary-color);
+    margin-bottom: 30px;
+    font-size: 2em;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+}
+
+/* --- Steps Indicator --- */
+
+.steps-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+    padding: 0 10px;
+}
+
+.steps-indicator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 4px;
+    background: #ccc;
+    transform: translateY(-50%);
+    z-index: 0;
+}
+
+.step-item {
+    z-index: 1;
+    text-align: center;
+    flex-grow: 1;
+    font-weight: 500;
+    color: #6c757d;
+    transition: color 0.3s;
+    position: relative;
+}
+
+.step-item.active {
+    color: var(--primary-color);
+}
+
+.step-number {
+    display: block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #ccc;
+    margin: 0 auto 5px;
+    font-weight: bold;
+    color: #6c757d;
+    transition: all 0.3s;
+}
+
+.step-item.active .step-number {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* --- Checkout Main Content --- */
+
+.checkout-main {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.booking-step h2 {
+    color: var(--secondary-color);
+    border-bottom: 1px solid var(--light-gray);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.step-description {
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+/* --- Form Elements --- */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--secondary-color);
+}
+
+.input-group input[type="text"],
+.input-group input[type="tel"],
+.input-group input[type="email"],
+.input-group input[type="date"],
+.input-group textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-group textarea {
+    resize: vertical;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* --- Slot Selection (Step 2) --- */
+
+.slot-selection .slot-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.slot-button {
+    padding: 10px 15px;
+    border: 2px solid #ccc;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.slot-button:hover:not(.active) {
+    border-color: var(--accent-color);
+}
+
+.slot-button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Review and Payment (Step 3) --- */
+
+.review-card {
+    border: 1px solid #ffdaaf;
+    background-color: #fffaf0;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.review-card h3 {
+    color: var(--primary-color);
+    margin-top: 0;
+}
+
+.radio-options label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #f9f9f9;
+}
+
+.radio-options input[type="radio"] {
+    margin-right: 10px;
+    accent-color: var(--primary-color);
+}
+
+.radio-options .disabled-option {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #f1f1f1;
+}
+
+/* --- Cart Summary --- */
+
+.checkout-summary {
+    margin-top: 25px;
+    border-top: 2px dashed var(--light-gray);
+    padding-top: 20px;
+}
+
+.checkout-summary h3 {
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+    color: #495057;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--light-gray);
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* --- Button Actions --- */
+
+.step-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--light-gray);
+}
+
+.primary-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s, opacity 0.3s;
+    min-width: 150px;
+}
+
+.primary-button:hover:not(:disabled) {
+    background-color: #e07400; /* Darker orange */
+}
+
+.primary-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.secondary-button {
+    background-color: white;
+    color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+}
+
+.secondary-button:hover {
+    background-color: var(--light-gray);
+}
+
+.error-message {
+    padding: 15px;
+    background-color: #f8d7da;
+    color: var(--error-color);
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.back-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+.back-link span {
+    color: var(--accent-color);
+    cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .input-group.half-width {
+        grid-column: 1 / -1;
+    }
+    .step-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .primary-button, .secondary-button {
+        width: 100%;
+        min-width: initial;
+    }
+}

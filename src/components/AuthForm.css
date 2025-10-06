@@ -1,0 +1,187 @@
+/* Enhanced AuthForm.css */
+:root {
+    --primary-color: #f77f00; /* PiiderLab Orange */
+    --secondary-color: #003049; /* Dark Blue/Navy */
+    --background-color: #f8f9fa; 
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    --border-radius-large: 12px;
+}
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0f2f1 0%, #b2ebf2 100%); /* Light, inviting background */
+    padding: 20px;
+}
+
+.auth-form-card {
+    background: white;
+    padding: 40px;
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--card-shadow);
+    width: 100%;
+    max-width: 420px;
+    transition: all 0.5s ease-out;
+}
+
+/* Typography and Headings */
+.auth-form-card h2 {
+    color: var(--secondary-color);
+    text-align: center;
+    margin-bottom: 8px;
+    font-size: 1.8rem;
+}
+.auth-form-card .subtitle {
+    color: #6c757d;
+    margin-bottom: 30px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* Inputs */
+.input-group {
+    margin-bottom: 20px;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-size: 0.95rem;
+}
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-size: 1rem;
+}
+.input-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.2); 
+}
+
+/* Primary Button (Main CTA) */
+.primary-button {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s;
+    letter-spacing: 0.5px;
+}
+.primary-button:hover:not(:disabled) {
+    background-color: #e57300;
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.primary-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Divider */
+.divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+    color: #adb5bd;
+}
+.divider::before, .divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: #e9ecef;
+}
+.divider::before { left: 0; }
+.divider::after { right: 0; }
+
+/* Google Button */
+.google-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    background: white;
+    color: #495057;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+.google-button:hover:not(:disabled) {
+    background-color: #f1f1f1;
+    border-color: #a0a0a0;
+}
+.google-button .google-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+/* Links and Helpers */
+.switch-link {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 0.95rem;
+}
+.switch-link span {
+    color: var(--primary-color);
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.2s;
+}
+.switch-link span:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.forgot-password {
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 5px;
+    padding: 0;
+    transition: color 0.2s;
+    float: right;
+    display: block; /* Ensure it stays aligned */
+}
+.forgot-password:hover {
+    color: var(--primary-color);
+}
+.error-message {
+    color: #dc3545;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.fade-in {
+    animation: fadeIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; /* Bouncy look */
+}

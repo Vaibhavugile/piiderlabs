@@ -1,0 +1,168 @@
+/* src/pages/TestListingPage.css */
+
+:root {
+    --primary-color: #f77f00;
+    --secondary-color: #003049;
+    --light-bg: #f8f9fa;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.test-listing-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.listing-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.listing-header h1 {
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+}
+
+.listing-header p {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+/* Search Bar Styling */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.search-bar input {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px 0 0 6px;
+    width: 300px;
+    font-size: 1rem;
+}
+
+.search-bar button {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.search-bar button:hover {
+    background-color: #d86f00; /* Darker primary */
+}
+
+/* Test Grid and Cards */
+.test-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.test-card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.test-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.test-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.test-header h2 {
+    font-size: 1.4rem;
+    color: var(--secondary-color);
+    margin: 0;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.popular-badge {
+    background-color: #ffeb3b;
+    color: #333;
+}
+
+.test-price {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    font-weight: bold;
+    margin: 10px 0 15px;
+}
+
+.test-details {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.add-to-cart {
+    /* Reusing primary-button style from AuthForm.css */
+    padding: 12px 20px;
+    width: 100%;
+    margin-top: auto; 
+}
+
+.back-link {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 1rem;
+}
+
+.back-link span {
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.back-link span:hover {
+    text-decoration: underline;
+}
+
+/* Add this to your existing TestListingPage.css */
+
+.test-card .test-card-link {
+    display: block; /* Make the link fill the card space */
+    text-decoration: none;
+    color: inherit; /* Inherit text color */
+    padding-bottom: 15px; /* Separate content from the footer button */
+}
+
+/* Ensure the card hover effect applies to the entire card */
+.test-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-shadow-hover, 0 10px 20px rgba(0, 0, 0, 0.15));
+}
+
+.test-card-link:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(247, 127, 0, 0.5); /* Primary color outline on focus */
+}
