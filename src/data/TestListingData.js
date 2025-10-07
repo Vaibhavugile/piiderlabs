@@ -178,48 +178,105 @@ export const MOCK_TESTS = [
 
 // --- Reusable Test Card Component (No changes needed) ---
 export const TestCard = ({ test, onAddToCart, onDetailsClick, showFullDetails = false }) => {
-    return (
-        <div className="test-card">
-            {test.highlight && <span className="badge">POPULAR</span>}
-            <h3 className="test-name">{test.name}</h3>
-            <p className="test-desc">{test.description}</p>
-            
-            <div className="test-details">
-                {showFullDetails && (
-                    <ul className="test-includes">
-                        {test.includes.map((item, index) => (
-                            <li key={index}>✓ {item}</li>
-                        ))}
-                    </ul>
-                )}
-                <div className="report-time">
-                    ⏱️ Report in {test.reportTime}
-                </div>
-            </div>
+  // --- Data mapping & safe defaults ---
+  const rawPrice = Number(test.price || 0);
+  const discountedPrice = rawPrice > 0 ? rawPrice : null;
 
-            <div className="card-footer">
-                <span className="test-price">₹{test.price.toFixed(2)}</span>
-                
-                <button 
-                    className="secondary-button view-details-btn"
-                    onClick={(e) => {
-                        e.stopPropagation(); 
-                        onDetailsClick(test.id); 
-                    }}
-                >
-                    View Details
-                </button>
+  let originalPrice = Number(test.originalPrice || 0);
+  if (!originalPrice || originalPrice <= 0) {
+    originalPrice = rawPrice > 0 ? Math.round(rawPrice * 3.3) : null;
+  }
 
-                <button 
-                    className="primary-button add-to-cart-btn"
-                    onClick={(e) => {
-                        e.stopPropagation(); 
-                        onAddToCart({ id: test.id, name: test.name, price: test.price });
-                    }}
-                >
-                    + Add to Cart
-                </button>
-            </div>
+  const discountPercent =
+    originalPrice && discountedPrice ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
+
+  const parametersCount = test.parametersCount || 91;
+  const reportTime = test.reportTime || "6 hours *";
+  const shortDesc = test.shortDescription || test.description || "Comprehensive health package.";
+
+  const formatINR = (value) =>
+    value || value === 0 ? `₹${Number(value).toLocaleString("en-IN", { maximumFractionDigits: 0 })}` : "—";
+
+  return (
+    <article className="test-card" aria-labelledby={`test-${test.id}-title`} role="article">
+      {/* Header */}
+      <header className="card-header">
+        <div className="checkup-badge" aria-hidden="true">Checkup</div>
+
+        <div className="card-header-title" id={`test-${test.id}-title`}>
+          {test.name}
         </div>
-    );
+
+        {test.subtitle && <div className="card-header-subtitle">{test.subtitle}</div>}
+
+        <div className="price-discount-row" aria-hidden="false">
+          {originalPrice ? (
+            <span className="original-price">{formatINR(originalPrice)}</span>
+          ) : (
+            <span className="original-price muted">—</span>
+          )}
+
+          <div className="discounted-price-group">
+            <span className="discounted-price">
+              {discountedPrice ? formatINR(discountedPrice) : "Contact"}
+            </span>
+
+            {discountPercent > 0 && <span className="discount-badge">{discountPercent}% OFF</span>}
+          </div>
+        </div>
+      </header>
+
+      {/* Body */}
+      <div className="card-body">
+        <div className="info-row-container" role="list">
+          <div className="info-item" role="listitem">
+            <strong>{parametersCount}</strong>
+            <div className="info-subtext">parameters included</div>
+          </div>
+
+          <div className="info-item" role="listitem">
+            <div className="info-subtext">Reports within</div>
+            <strong>{reportTime}</strong>
+          </div>
+        </div>
+
+        <div className="card-description">
+          {showFullDetails ? test.description || shortDesc : shortDesc}
+        </div>
+
+        {/* Actions */}
+        <div className="card-actions">
+          <button
+            className="view-details"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDetailsClick && onDetailsClick(test.id);
+            }}
+            aria-label={`View details for ${test.name}`}
+            type="button"
+          >
+            View Details
+          </button>
+
+          <div className="card-action-right">
+            <div className="card-price" aria-hidden="true">
+              {discountedPrice ? formatINR(discountedPrice) : "—"}
+            </div>
+
+            <button
+              className="card-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddToCart && onAddToCart({ id: test.id, name: test.name, price: discountedPrice || 0 });
+              }}
+              aria-label={`Add ${test.name} to cart`}
+              type="button"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
 };

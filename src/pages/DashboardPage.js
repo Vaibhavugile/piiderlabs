@@ -11,7 +11,6 @@ import { db } from '../firebase';
 import { collection, doc, setDoc, onSnapshot } from "firebase/firestore";
 
 // --- GLOBAL CONSTANTS & FIREBASE SETUP ---
-// Using the project ID from firebase.js for context, though it's not needed for the new path
 const appId = 'pidr-c644e'; 
 
 if (!db) {
@@ -36,8 +35,7 @@ const getUserProfileRef = (userId) => {
     if (!db) return null;
     
     // ✅ FIX: Set reference to the top-level 'users' collection 
-    // and use the userId as the document ID.
-    // This will save the addresses/familyMembers arrays as fields on the user's document.
+    // and use the userId as the document ID (users/{userId}).
     const profilesCollection = collection(db, 'users');
     return doc(profilesCollection, userId); 
 };
@@ -487,26 +485,34 @@ const DashboardPage = () => {
     // --- MAIN RENDER ---
     return (
         <div className="dashboard-container">
+            {/* 1. HEADER (Styled by .dashboard-header) */}
             <header className="dashboard-header">
-                <div>
+                {/* Updated: Wrap title and description in .header-brand for better alignment */}
+                <div className="header-brand"> 
                     <h1>Welcome Back, {currentUser?.displayName || 'User'}!</h1>
                     <p>Your personal health management hub. User ID: {currentUser?.uid.substring(0, 10)}...</p>
                 </div>
-                <button className="primary-button logout-button" onClick={logout}>
-                    Logout
-                </button>
+                {/* Updated: Wrap logout button in .header-actions */}
+                <div className="header-actions">
+                    <button className="primary-button logout-button" onClick={logout}>
+                        Logout
+                    </button>
+                </div>
             </header>
 
-            <main className="dashboard-grid-layout">
-                {/* LEFT: Navigation Menu */}
-                <nav className="dashboard-menu">
+            {/* NEW: Wrapper for Menu Bar and Content, uses .main-content-wrapper for padding/centering */}
+            <div className="main-content-wrapper">
+                
+                {/* 2. NAVIGATION MENU (Horizontal Bar - Styled by .dashboard-menu-bar) */}
+                <nav className="dashboard-menu-bar">
                     {dashboardMenu.map((item) => (
                         <button
                             key={item.id}
                             className={`menu-item ${activeSection === item.id ? 'active' : ''}`}
                             onClick={() => {
                                 // For items with a direct path, use navigate. Otherwise, change internal state.
-                                if (item.path) {
+                                if (item.path && item.id !== 'my-profile' && item.id !== 'order-history' && item.id !== 'my-reports') {
+                                    // Navigate to a new route if it's not a view that should be rendered internally (like my-profile)
                                     navigate(item.path);
                                 } else {
                                     setActiveSection(item.id);
@@ -519,11 +525,11 @@ const DashboardPage = () => {
                     ))}
                 </nav>
 
-                {/* RIGHT: Content Area */}
+                {/* 3. CONTENT AREA (Styled by .dashboard-content) */}
                 <div className="dashboard-content">
                     {renderContent()}
                 </div>
-            </main>
+            </div>
             
             {/* Modals for Addresses and Family Members */}
             {(showAddressModal || editingAddress) && (
