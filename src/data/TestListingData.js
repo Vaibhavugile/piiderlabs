@@ -177,7 +177,14 @@ export const MOCK_TESTS = [
 ];
 
 // --- Reusable Test Card Component (No changes needed) ---
-export const TestCard = ({ test, onAddToCart, onDetailsClick, showFullDetails = false }) => {
+// --- Reusable Test Card Component (with compact variant) ---
+export const TestCard = ({
+  test,
+  onAddToCart,
+  onDetailsClick,
+  showFullDetails = false,
+  variant = 'default', // 'default' | 'compact'
+}) => {
   // --- Data mapping & safe defaults ---
   const rawPrice = Number(test.price || 0);
   const discountedPrice = rawPrice > 0 ? rawPrice : null;
@@ -190,16 +197,73 @@ export const TestCard = ({ test, onAddToCart, onDetailsClick, showFullDetails = 
   const discountPercent =
     originalPrice && discountedPrice ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
 
-  const parametersCount = test.parametersCount || 91;
   const reportTime = test.reportTime || "6 hours *";
   const shortDesc = test.shortDescription || test.description || "Comprehensive health package.";
 
   const formatINR = (value) =>
     value || value === 0 ? `₹${Number(value).toLocaleString("en-IN", { maximumFractionDigits: 0 })}` : "—";
 
+  // --- COMPACT VARIANT ---
+  if (variant === 'compact') {
+    return (
+      <article className="test-card compact" aria-labelledby={`test-${test.id}-title`} role="article">
+        <header className="card-header compact">
+          <div className="card-header-title" id={`test-${test.id}-title`}>
+            {test.name}
+          </div>
+
+          <div className="price-discount-row compact" aria-hidden="false">
+  {originalPrice && (
+    <span className="original-price compact">
+      {formatINR(originalPrice)}
+    </span>
+  )}
+  <span className="discounted-price">{discountedPrice ? formatINR(discountedPrice) : "Contact"}</span>
+  {discountPercent > 0 && <span className="discount-badge">{discountPercent}% OFF</span>}
+</div>
+
+        </header>
+
+        <div className="card-body compact">
+          <div className="compact-meta">
+            <span className="meta-item">
+              Reports within <strong>{reportTime}</strong>
+            </span>
+          </div>
+
+          <div className="compact-actions">
+            <button
+              className="view-details"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDetailsClick && onDetailsClick(test.id);
+              }}
+              aria-label={`View details for ${test.name}`}
+              type="button"
+            >
+              View Details
+            </button>
+
+            <button
+              className="card-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddToCart && onAddToCart({ id: test.id, name: test.name, price: discountedPrice || 0 });
+              }}
+              aria-label={`Add ${test.name} to cart`}
+              type="button"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  // --- DEFAULT (unchanged) ---
   return (
     <article className="test-card" aria-labelledby={`test-${test.id}-title`} role="article">
-      {/* Header */}
       <header className="card-header">
         <div className="checkup-badge" aria-hidden="true">Checkup</div>
 
@@ -226,11 +290,10 @@ export const TestCard = ({ test, onAddToCart, onDetailsClick, showFullDetails = 
         </div>
       </header>
 
-      {/* Body */}
       <div className="card-body">
         <div className="info-row-container" role="list">
           <div className="info-item" role="listitem">
-            <strong>{parametersCount}</strong>
+            <strong>{test.parametersCount || 91}</strong>
             <div className="info-subtext">parameters included</div>
           </div>
 
@@ -244,7 +307,6 @@ export const TestCard = ({ test, onAddToCart, onDetailsClick, showFullDetails = 
           {showFullDetails ? test.description || shortDesc : shortDesc}
         </div>
 
-        {/* Actions */}
         <div className="card-actions">
           <button
             className="view-details"

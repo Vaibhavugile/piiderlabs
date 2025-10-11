@@ -7,13 +7,13 @@ import { getFirestore } from "firebase/firestore";
 
 // Your PiiderLab Firebase CONFIGURATION
 const firebaseConfig = {
-  apiKey: "AIzaSyBmeU2_tCAmhMlsZ3laAvwM6R1J309Y0hk",
-  authDomain: "pidr-c644e.firebaseapp.com",
-  projectId: "pidr-c644e",
-  storageBucket: "pidr-c644e.firebasestorage.app",
-  messagingSenderId: "344167777219",
-  appId: "1:344167777219:web:a12bdbe8dbc5efab1e7376",
-  measurementId: "G-PGRBXP6XK5"
+  apiKey: "AIzaSyD360ivgc7a3T1OffprpgOxx4BlK26Jnbs",
+  authDomain: "pidr-7dbe8.firebaseapp.com",
+  projectId: "pidr-7dbe8",
+  storageBucket: "pidr-7dbe8.firebasestorage.app",
+  messagingSenderId: "324014919259",
+  appId: "1:324014919259:web:38c7f1360ca3234f65f97e",
+  measurementId: "G-X3ENZSR74S"
 };
 
 // Initialize Firebase

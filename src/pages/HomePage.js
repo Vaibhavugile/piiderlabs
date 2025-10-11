@@ -10,7 +10,7 @@ import { MOCK_TESTS, TestCard } from '../data/TestListingData';
 import heroImage1 from '../assets/hero14.png';
 import heroImage2 from '../assets/hero15.png';
 import heroImage3 from '../assets/hero12.png';
-
+import logo from '../assets/piiderlogo.jpg';
 import './HomePage.css'; 
 
 // --- SLIDE DATA ARRAY (Final content structure) ---
@@ -55,6 +55,11 @@ const HomePage = () => {
   
   const userName = currentUser ? currentUser.fullName || currentUser.email : '';
   const currentSlide = HERO_SLIDES[currentSlideIndex]; // Current slide object
+const [activeSlide, setActiveSlide] = useState(0);
+const [carouselPaused, setCarouselPaused] = useState(false);
+const carouselViewportRef = React.useRef(null);
+const carouselTrackRef = React.useRef(null);
+
 
   // --- SLIDER AUTO-ADVANCE LOGIC ---
   useEffect(() => {
@@ -94,7 +99,82 @@ const HomePage = () => {
       addItem(test);
   }
   
-  const featuredTests = MOCK_TESTS.filter(test => test.highlight).slice(0, 3);
+  const featuredTests = MOCK_TESTS.filter(test => test.highlight);
+  // ---- Carousel source data ----
+const MIN_SLIDES = 2; // enough width to guarantee scroll movement
+
+// Create a "View All" pseudo-card at the end
+const viewAllItem = {
+  id: 'view-all',
+  _isViewAll: true,
+  title: `View All ${MOCK_TESTS.length} Tests & Packages`,
+};
+
+// Build the base list: featured tests + the "View All" tile
+const baseCarouselItems = [...featuredTests, viewAllItem];
+
+// If there are too few items to scroll, repeat them until we reach MIN_SLIDES
+const carouselItems = (() => {
+  if (baseCarouselItems.length >= MIN_SLIDES) return baseCarouselItems;
+  const out = [];
+  let i = 0;
+  while (out.length < MIN_SLIDES) {
+    out.push({ ...baseCarouselItems[i % baseCarouselItems.length], _cloneIdx: i });
+    i++;
+  }
+  return out;
+})();
+
+// === Carousel state & refs (use these lengths now) ===
+
+
+// Scroll helpers
+const scrollToIndex = (index) => {
+  const viewport = carouselViewportRef.current;
+  const track = carouselTrackRef.current;
+  if (!viewport || !track) return;
+
+  const child = track.children[index];
+  if (!child) return;
+
+  const left = child.offsetLeft - track.offsetLeft;
+  viewport.scrollTo({ left, behavior: 'smooth' });
+  setActiveSlide(index);
+};
+
+const goTo = (i) => scrollToIndex(i);
+const slideNext = () => goTo((activeSlide + 1) % carouselItems.length);
+const slidePrev = () => goTo((activeSlide - 1 + carouselItems.length) % carouselItems.length);
+
+// Auto-advance every 4s, even if there are few items (we padded them)
+useEffect(() => {
+  if (carouselPaused || carouselItems.length <= 1) return;
+  const id = setInterval(() => {
+    slideNext();
+  }, 4000);
+  return () => clearInterval(id);
+}, [activeSlide, carouselPaused, carouselItems.length]);
+
+// Sync active dot when user drags/scrolls
+useEffect(() => {
+  const viewport = carouselViewportRef.current;
+  const onScroll = () => {
+    const track = carouselTrackRef.current;
+    if (!viewport || !track) return;
+
+    let closest = 0;
+    let minDelta = Infinity;
+    for (let i = 0; i < track.children.length; i++) {
+      const child = track.children[i];
+      const delta = Math.abs(child.offsetLeft - viewport.scrollLeft);
+      if (delta < minDelta) { minDelta = delta; closest = i; }
+    }
+    setActiveSlide(closest);
+  };
+  if (viewport) viewport.addEventListener('scroll', onScroll, { passive: true });
+  return () => viewport && viewport.removeEventListener('scroll', onScroll);
+}, []);
+
 
 
   return (
@@ -102,7 +182,9 @@ const HomePage = () => {
       {/* --- HEADER/NAVBAR --- */}
       <header className="app-header">
         <div className="logo" onClick={() => navigate('/')}>
-            🧪 PiiderLab
+          <img 
+                            src={logo} // Dynamic image source
+                        />
         </div>
         <nav className="header-nav">
           {currentUser ? (
@@ -238,23 +320,60 @@ const HomePage = () => {
       </section>
       
       {/* --- FEATURED TESTS (Unchanged) --- */}
-      <section className="featured-tests-section">
-          <h2>Popular Health Checks Near You</h2>
-          <p className="section-subtext">Book our most popular packages and single tests instantly.</p>
-          <div className="test-grid">
-              {featuredTests.map(test => (
-                  <TestCard 
-                      key={test.id} 
-                      test={test} 
-                      onAddToCart={handleAddToCart}
-                      onDetailsClick={handleDetailsClick} 
-                  />
-              ))}
-          </div>
-          <div className="view-all-link">
-              <span onClick={() => navigate('/tests')}>View All {MOCK_TESTS.length} Tests & Packages →</span>
-          </div>
-      </section>
+     {/* === POPULAR CHECKS — AUTO CAROUSEL === */}
+<section className="carousel-section"
+         onMouseEnter={() => setCarouselPaused(true)}
+         onMouseLeave={() => setCarouselPaused(false)}>
+  <h2>Popular Health Checks Near You</h2>
+  <p className="section-subtext">Book our most popular packages and single tests instantly.</p>
+
+  <div className="carousel-viewport" ref={carouselViewportRef}>
+    <div className="carousel-track" ref={carouselTrackRef}>
+      {carouselItems.map((item, idx) => (
+        <div className="carousel-item" key={`${item.id}-${item._cloneIdx ?? 'base'}`}>
+          {item._isViewAll ? (
+            <button
+              className="view-all-card"
+              onClick={() => navigate('/tests')}
+              aria-label="View all tests and packages"
+            >
+              <div className="va-body">
+                <div className="va-title">{item.title}</div>
+                <div className="va-cta">Browse All →</div>
+              </div>
+            </button>
+          ) : (
+            <TestCard
+              test={item}
+              onAddToCart={handleAddToCart}
+              onDetailsClick={handleDetailsClick}
+              variant="compact"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div className="carousel-controls">
+    <button className="carousel-arrow" onClick={slidePrev} aria-label="Previous">←</button>
+
+    <div className="carousel-dots">
+      {carouselItems.map((_, i) => (
+        <button
+          key={i}
+          className={`carousel-dot ${i === activeSlide ? 'active' : ''}`}
+          onClick={() => goTo(i)}
+          aria-label={`Go to item ${i + 1}`}
+        />
+      ))}
+    </div>
+
+    <button className="carousel-arrow" onClick={slideNext} aria-label="Next">→</button>
+  </div>
+</section>
+
+
       
       {/* --- HOW IT WORKS & FOOTER (Unchanged) --- */}
       <section className="how-it-works-section">
