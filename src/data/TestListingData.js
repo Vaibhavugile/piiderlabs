@@ -3,45 +3,45 @@
 import React from 'react';
 // We don't need to use `useNavigate` here, we'll pass the handler from the parent.
 // ------- Taxonomies (filters) -------
+
 export const CATEGORIES = [
-  { key: 'routine', label: 'Routine Tests' },
-  { key: 'womens-health', label: "Women's Health" },
-  { key: 'senior-wellness', label: 'Senior Wellness' },
-  { key: 'cardiac', label: 'Cardiac Panel' },
-  { key: 'allergy', label: 'Allergy Tests' },
-  { key: 'infectious', label: 'Infectious Diseases' },
-  { key: 'full-body', label: 'Full Body Checkups' },
-  { key: 'diabetes', label: 'Diabetes Care' },
-  { key: 'vitamins', label: 'Vitamins & Minerals' },
+  { key: 'routine',       label: 'Routine Tests',       icon: '🧪', img: '/assets/cat/routine.png' },
+  { key: 'womens-health', label: "Women's Health",      icon: '👩‍⚕️', img: '/assets/cat/women.png' },
+  { key: 'senior-wellness',label:'Senior Wellness',     icon: '👵',   img: '/assets/cat/senior.png' },
+  { key: 'cardiac',       label: 'Cardiac Panel',       icon: '❤️',   img: '/assets/cat/cardiac.png' },
+  { key: 'allergy',       label: 'Allergy Tests',       icon: '🌼',   img: '/assets/cat/allergy.png' },
+  { key: 'infectious',    label: 'Infectious Diseases', icon: '🦠',   img: '/assets/cat/infectious.png' },
+  { key: 'full-body',     label: 'Full Body Checkups',  icon: '🩺',   img: '/assets/cat/fullbody.png' },
+  { key: 'diabetes',      label: 'Diabetes Care',       icon: '🩸',   img: '/assets/cat/diabetes.png' },
+  { key: 'vitamins',      label: 'Vitamins & Minerals', icon: '💊',   img: '/assets/cat/vitamins.png' },
 ];
 
 export const ORGANS = [
-  { key: 'heart', label: 'Heart & Vascular' },
-  { key: 'liver', label: 'Liver & Digestive' },
-  { key: 'kidney', label: 'Kidney & Urinary' },
-  { key: 'respiratory', label: 'Respiratory & Lungs' },
-  { key: 'bone', label: 'Bones & Joints' },
-  { key: 'skin-allergy', label: 'Skin & Allergy' },
-  { key: 'hormones', label: 'Hormones & Glands' },
-  { key: 'general-blood', label: 'General Blood Health' },
+  { key: 'heart',         label: 'Heart & Vascular',     icon: '💓', img: '/assets/org/heart.png' },
+  { key: 'liver',         label: 'Liver & Digestive',    icon: '🫀', img: '/assets/org/liver.png' },
+  { key: 'kidney',        label: 'Kidney & Urinary',     icon: '🧫', img: '/assets/org/kidney.png' },
+  { key: 'respiratory',   label: 'Respiratory & Lungs',  icon: '🫁', img: '/assets/org/lungs.png' },
+  { key: 'bone',          label: 'Bones & Joints',       icon: '🦴', img: '/assets/org/bones.png' },
+  { key: 'skin-allergy',  label: 'Skin & Allergy',       icon: '🧴', img: '/assets/org/skin.png' },
+  { key: 'hormones',      label: 'Hormones & Glands',    icon: '🧬', img: '/assets/org/hormone.png' },
+  { key: 'general-blood', label: 'General Blood Health', icon: '🩸', img: '/assets/org/blood.png' },
 ];
 
 export const CONCERNS = [
-  { key: 'fatigue', label: 'Feeling Fatigued' },
-  { key: 'pre-pregnancy', label: 'Pre-pregnancy Check' },
-  { key: 'post-surgery', label: 'Post-surgery' },
-  { key: 'annual', label: 'Annual Full-Body Scan' },
-  { key: 'travel', label: 'Travel Required Tests' },
-  { key: 'senior', label: 'Senior Citizen Screening' },
-  { key: 'kids', label: 'Kids & Adolescents' },
+  { key: 'fatigue',        label: 'Feeling Fatigued?',       icon: '😮‍💨' },
+  { key: 'pre-pregnancy',  label: 'Pre-pregnancy Check',     icon: '🤰' },
+  { key: 'post-surgery',   label: 'Post-surgery',            icon: '🏥' },
+  { key: 'annual',         label: 'Annual Full-Body',        icon: '📅' },
+  { key: 'travel',         label: 'Travel Required Tests',   icon: '🧳' },
+  { key: 'senior',         label: 'Senior Screening',        icon: '🧓' },
+  { key: 'kids',           label: 'Kids & Adolescents',      icon: '🧒' },
 ];
 
 export const SEASONS = [
-  { key: 'monsoon', label: 'Monsoon (Dengue/Malaria/Typhoid)' },
-  { key: 'winter', label: 'Winter (Vit-D/Calcium)' },
-  { key: 'newyear', label: 'New Year Thyroid + Glucose' },
+  { key: 'monsoon', label: 'Monsoon: Dengue / Malaria', icon: '🌧️', img: '/assets/season/monsoon.png' },
+  { key: 'winter',  label: 'Winter: Vitamin D / Calcium',icon: '❄️', img: '/assets/season/winter.png' },
+  {key:'summer',label:'Summer: Thyroid + Glucose',icon:'',img:'/assets/season/summer.png'},
 ];
-
 // --- MOCK DATA ---
 export const MOCK_TESTS = [
     {

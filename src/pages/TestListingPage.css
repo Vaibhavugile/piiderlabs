@@ -1,291 +1,296 @@
-/* src/pages/TestListingPage.css - PREMIUM & MODERN UPDATE */
+/* ==============================
+   TestListingPage.css — Modern Animated Upgrade
+   ============================== */
 
 :root {
-    /* Sophisticated Color Palette */
-    --primary-color: #0077b6; /* Deep Blue - Action/Accent */
-    --secondary-color: #03045e; /* Navy/Dark Blue - Headings/Text */
-    --accent-color: #f77f00; /* Warm Orange - Highlight/Badges */
-    --light-bg: #f5f7fa; /* Subtle off-white background */
-    --card-bg: #ffffff;
-    --text-color: #333333;
-    
-    /* Enhanced Shadow for a Premium Lifted Look */
-    --card-shadow: 0 10px 30px rgba(3, 4, 94, 0.08); /* Soft, deep shadow */
-    --card-shadow-hover: 0 15px 40px rgba(3, 4, 94, 0.15); 
+  --primary-color: #0077b6;
+  --secondary-color: #03045e;
+  --accent-color: #f77f00;
+  --light-bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --text-color: #333;
+  --card-shadow: 0 10px 25px rgba(3, 4, 94, 0.08);
+  --card-shadow-hover: 0 20px 45px rgba(3, 4, 94, 0.16);
+  --transition-base: 0.35s ease;
 }
 
+/* Page Base */
 body {
-    background-color: var(--light-bg);
-    font-family: 'Inter', sans-serif; /* Recommended modern font */
-    color: var(--text-color);
+  background-color: var(--light-bg);
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color);
+  overflow-x: hidden;
 }
 
 .test-listing-container {
-    padding: 30px 20px;
-    max-width: 1300px;
-    margin: 0 auto;
+  padding: 40px 20px 80px;
+  max-width: 1300px;
+  margin: 0 auto;
+  animation: fadeInPage 0.6s ease both;
 }
 
+/* -----------------------
+   Header
+-------------------------- */
 .listing-header {
-    text-align: center;
-    margin-bottom: 50px;
-    padding: 30px 0;
-    border-bottom: 1px solid #e0e4eb;
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 50px 0;
+  background: linear-gradient(135deg, rgba(0,119,182,0.05) 0%, rgba(247,127,0,0.05) 100%);
+  border-radius: 20px;
+  animation: softFadeIn 1s ease both;
 }
 
 .listing-header h1 {
-    color: var(--secondary-color);
-    margin-bottom: 10px;
-    font-size: 3rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
+  color: var(--secondary-color);
+  margin-bottom: 12px;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  animation: slideUp 0.7s ease both;
 }
 
 .listing-header p {
-    color: #6c757d;
-    font-size: 1.2rem;
-    max-width: 600px;
-    margin: 0 auto;
+  color: #6c757d;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+  animation: fadeIn 1.2s ease both;
 }
 
-/* Search Bar Styling */
+/* -----------------------
+   Search Bar
+-------------------------- */
 .search-bar {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-    width: 100%;
-    max-width: 500px;
-    margin: 30px auto 0;
-    box-shadow: 0 4px 15px rgba(0, 119, 182, 0.1);
-    border-radius: 8px;
-    overflow: hidden; /* Contains the children for the border-radius */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 500px;
+  margin: 28px auto 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(0, 119, 182, 0.08);
+  transition: all 0.4s ease;
+}
+
+.search-bar:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 119, 182, 0.15);
 }
 
 .search-bar input {
-    flex-grow: 1;
-    padding: 14px 20px;
-    border: none;
-    font-size: 1.05rem;
-    outline: none;
-    transition: box-shadow 0.3s;
-}
-
-.search-bar input:focus {
-    box-shadow: inset 0 0 5px rgba(0, 119, 182, 0.1);
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+  color: var(--secondary-color);
 }
 
 .search-bar button {
-    padding: 14px 25px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 1.05rem;
-    font-weight: 600;
-    transition: background-color 0.3s, transform 0.1s ease-in-out;
+  padding: 14px 25px;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .search-bar button:hover {
-    background-color: #005f93; /* Slightly darker */
-}
-.search-bar button:active {
-    transform: scale(0.98);
+  background: #005f93;
+  transform: translateY(-1px);
 }
 
+/* -----------------------
+   Active Filters
+-------------------------- */
+.pill {
+  background: rgba(0, 119, 182, 0.1);
+  color: var(--primary-color);
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  animation: scaleIn 0.3s ease both;
+}
 
-/* Test Grid and Cards */
+.link-like {
+  border: none;
+  background: none;
+  color: var(--accent-color);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+.link-like:hover {
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+/* -----------------------
+   Grid Layout & Cards
+-------------------------- */
 .test-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 35px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+  animation: fadeInGrid 0.6s ease both;
 }
 
 .test-card {
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: var(--card-shadow);
-    border: 1px solid #f0f0f0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    /* Key Animation */
-    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 26px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid rgba(3,4,94,0.06);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  animation: cardFloatIn 0.6s ease both;
 }
-
 .test-card:hover {
-    transform: translateY(-8px); /* Deeper lift */
-    box-shadow: var(--card-shadow-hover);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--card-shadow-hover);
 }
-
-.test-card-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    padding-bottom: 15px;
+.test-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(0,119,182,0.06), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
-
-.test-card-link:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(0, 119, 182, 0.3); /* Premium focus ring */
-    border-radius: 12px;
+.test-card:hover::before {
+  opacity: 1;
 }
 
 .test-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
 }
 
 .test-header h2 {
-    font-size: 1.6rem;
-    color: var(--secondary-color);
-    margin: 0;
-    line-height: 1.3;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin: 0;
 }
 
 .badge {
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-left: 10px;
-    flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 700;
 }
-
 .popular-badge {
-    background-color: var(--accent-color);
-    color: white;
-    box-shadow: 0 2px 5px rgba(247, 127, 0, 0.3);
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(247, 127, 0, 0.3);
 }
 
 .test-desc {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 15px;
-    line-height: 1.5;
-    min-height: 45px; /* Ensure consistent card height */
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 16px;
 }
 
 .test-price {
-    font-size: 2.2rem;
-    color: var(--primary-color);
-    font-weight: 800;
-    margin: 10px 0 20px;
-    display: block;
-}
-
-.test-details {
-    margin-bottom: 20px;
-    border-top: 1px solid #f0f0f0;
-    padding-top: 15px;
-}
-
-.test-includes {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 15px;
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  font-weight: 800;
+  margin-bottom: 16px;
 }
 
 .test-includes li {
-    font-size: 0.9rem;
-    color: #444;
-    margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.4;
 }
 
 .report-time {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--secondary-color);
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+  font-weight: 600;
 }
 
 .card-footer {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
 }
 
-/* General Button Styles (for premium consistency) */
-.primary-button, .secondary-button {
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    text-align: center;
-    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+/* -----------------------
+   Buttons
+-------------------------- */
+.primary-button,
+.secondary-button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .primary-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
+  background: var(--primary-color);
+  color: white;
+  border: none;
 }
-
 .primary-button:hover {
-    background-color: #005f93;
-    box-shadow: 0 5px 15px rgba(0, 119, 182, 0.4);
-}
-.primary-button:active {
-    transform: scale(0.99);
+  background: #005f93;
+  box-shadow: 0 6px 18px rgba(0, 119, 182, 0.4);
 }
 
 .secondary-button {
-    background-color: transparent;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+  background: none;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
 }
-
 .secondary-button:hover {
-    background-color: rgba(0, 119, 182, 0.05);
-    color: var(--secondary-color);
-    border-color: var(--secondary-color);
-}
-.secondary-button:active {
-    transform: scale(0.99);
+  background: rgba(0, 119, 182, 0.06);
 }
 
-/* Specific button overrides */
-.add-to-cart-btn {
-    width: 100%;
-}
-.view-details-btn {
-    width: 100%;
-}
+/* -----------------------
+   Animations
+-------------------------- */
+@keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes softFadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes cardFloatIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInGrid { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
+@keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-
-.back-link {
-    text-align: center;
-    margin-top: 50px;
-    font-size: 1.1rem;
-}
-
-.back-link span {
-    color: var(--primary-color);
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.back-link span:hover {
-    text-decoration: underline;
-    color: var(--secondary-color);
-}
-
-/* Media Query for smaller screens */
+/* -----------------------
+   Mobile Responsiveness
+-------------------------- */
 @media (max-width: 768px) {
-    .test-listing-container {
-        padding: 20px 10px;
-    }
-
-    .listing-header h1 {
-        font-size: 2.2rem;
-    }
-
-    .test-grid {
-        grid-template-columns: 1fr;
-    }
+  .listing-header {
+    padding: 30px 10px;
+    margin-bottom: 30px;
+  }
+  .listing-header h1 {
+    font-size: 2rem;
+  }
+  .test-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .test-card {
+    padding: 22px;
+  }
 }

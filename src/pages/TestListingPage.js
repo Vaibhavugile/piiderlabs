@@ -1,178 +1,192 @@
 // src/pages/TestListingPage.js
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useCart } from '../context/CartContext'; // Import useCart
-import { useAuth } from '../context/AuthContext';
-import {  MOCK_TESTS,
-  TestCard,
-  CATEGORIES,
-  ORGANS,
-  CONCERNS,
-  SEASONS} from '../data/TestListingData'; 
-import './TestListingPage.css'; 
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { MOCK_TESTS, TestCard } from "../data/TestListingData";
+import "./TestListingPage.css";
 
 const TestListingPage = () => {
-    const { currentUser } = useAuth();
-    const { addItem } = useCart(); // Get addItem function
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false); 
-    const [searchParams, setSearchParams] = useSearchParams();
-const has = (arr, key) => Array.isArray(arr) && arr.includes(key);
-const textMatch = (t, q) =>
-  t.name.toLowerCase().includes(q) ||
-  (Array.isArray(t.includes) && t.includes.some(i => String(i).toLowerCase().includes(q)));
-const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
-const category = searchParams.get('category') || '';
-const organ    = searchParams.get('organ') || '';
-const concern  = searchParams.get('concern') || '';
-const season   = searchParams.get('season') || '';
-const sort     = searchParams.get('sort') || ''; // optional: 'trending' | 'price-asc' | 'price-desc'
+  const { addItem } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-useEffect(() => {
-  setSearchQuery(searchParams.get('search') || '');
-}, [searchParams]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilter, setActiveFilter] = useState(null);
+  const [filteredTests, setFilteredTests] = useState(MOCK_TESTS);
 
-    // ---------------------------------------------
-    // 1. FILTERING LOGIC 
-    // ---------------------------------------------
-   const filteredTests = useMemo(() => {
-  let list = [...MOCK_TESTS];
+  const observerRef = useRef(null);
 
-  // facet filters
-  if (category) list = list.filter(t => has(t.categories, category));
-  if (organ)    list = list.filter(t => has(t.organs, organ));
-  if (concern)  list = list.filter(t => has(t.concerns, concern));
-  if (season)   list = list.filter(t => has(t.seasons, season));
+  // 🌟 Extract URL params for filters
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const search = params.get("search") || "";
+    const category = params.get("category") || "";
+    const organ = params.get("organ") || "";
+    const concern = params.get("concern") || "";
+    const season = params.get("season") || "";
 
-  // text filter
-  const q = (searchQuery || '').toLowerCase().trim();
-  if (q) list = list.filter(t => textMatch(t, q));
+    setSearchTerm(search);
+    setActiveFilter(category || organ || concern || season || null);
 
-  // optional sort
-  if (sort === 'trending') list.sort((a,b) => (b.trendingScore||0) - (a.trendingScore||0));
-  if (sort === 'price-asc') list.sort((a,b) => (a.price||0) - (b.price||0));
-  if (sort === 'price-desc') list.sort((a,b) => (b.price||0) - (a.price||0));
+    let results = MOCK_TESTS;
 
-  return list;
-}, [searchQuery, category, organ, concern, season, sort]);
-
-
-// normalize for safe array checks
-
-
-    // ---------------------------------------------
-    // 2. SEARCH HANDLERS 
-    // ---------------------------------------------
-   const handleSearchSubmit = (e) => {
-  e.preventDefault();
-  const next = new URLSearchParams(searchParams);
-  if (searchQuery) next.set('search', searchQuery);
-  else next.delete('search');
-  setSearchParams(next);
-};
-const clearAllFilters = () => setSearchParams(new URLSearchParams());
-const setSort = (val) => {
-  const next = new URLSearchParams(searchParams);
-  if (val) next.set('sort', val); else next.delete('sort');
-  setSearchParams(next);
-};
-
-
-    // ---------------------------------------------
-    // 3. CART HANDLER
-    // ---------------------------------------------
-    const handleAddToCart = (test) => {
-        addItem(test);
-        alert(`Added ${test.name} to your cart!`);
+    if (search) {
+      results = results.filter((test) =>
+        test.name.toLowerCase().includes(search.toLowerCase())
+      );
     }
 
-    // ---------------------------------------------
-    // 4. DETAIL NAVIGATION HANDLER (FIX)
-    // ---------------------------------------------
-      const handleDetailsClick = (testId) => {
-        // Find the full test object to get its slug
-        const testToView = MOCK_TESTS.find(t => t.id === testId);
-        
-        if (testToView && testToView.slug) {
-            // Navigate to the dynamic route using the slug
-            navigate(`/tests/${testToView.slug}`);
-        } else {
-            console.error(`Test with ID ${testId} not found or is missing a slug.`);
-        }
-    };
+    if (category) {
+      results = results.filter((test) =>
+        test.categories.includes(category)
+      );
+    }
 
+    if (organ) {
+      results = results.filter((test) => test.organs.includes(organ));
+    }
 
-    return (
-        <div className="test-listing-container">
-            <header className="listing-header">
-                <h1>All Health Tests & Packages</h1>
-                <p>Choose from over 50+ lab tests and packages for collection at home.</p>
-                
-                {/* Search Bar for this page */}
-                <form onSubmit={handleSearchSubmit} className="search-bar">
-                    <input 
-                        type="text" 
-                        placeholder="Search by test name or marker..." 
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <button type="submit">Search</button>
-                </form>
-                {/* Active filters row */}
-<div className="active-filters" style={{display:'flex',flexWrap:'wrap',gap:8,alignItems:'center',marginTop:10}}>
-  {(category || organ || concern || season || searchQuery) ? (
-    <>
-      {category && <span className="pill">Category: {CATEGORIES.find(c=>c.key===category)?.label || category}</span>}
-      {organ && <span className="pill">Organ: {ORGANS.find(o=>o.key===organ)?.label || organ}</span>}
-      {concern && <span className="pill">Concern: {CONCERNS.find(c=>c.key===concern)?.label || concern}</span>}
-      {season && <span className="pill">Season: {SEASONS.find(s=>s.key===season)?.label || season}</span>}
-      {searchQuery && <span className="pill">Search: “{searchQuery}”</span>}
-      <button className="link-like" onClick={clearAllFilters}>Clear all</button>
-    </>
-  ) : (
-    <span style={{color:'#6c757d'}}>Tip: use filters or search to narrow results.</span>
-  )}
+    if (concern) {
+      results = results.filter((test) => test.concerns.includes(concern));
+    }
 
-  {/* Sort control */}
-  <div style={{marginLeft:'auto',display:'flex',gap:6,alignItems:'center'}}>
-    <label htmlFor="sort" style={{color:'#6c757d'}}>Sort</label>
-    <select id="sort" value={sort} onChange={e=>setSort(e.target.value)}>
-      <option value="">Relevance</option>
-      <option value="trending">Trending</option>
-      <option value="price-asc">Price: Low → High</option>
-      <option value="price-desc">Price: High → Low</option>
-    </select>
-  </div>
-</div>
+    if (season) {
+      results = results.filter((test) => test.seasons.includes(season));
+    }
 
-            </header>
+    setFilteredTests(results);
+  }, [location.search]);
 
-            {/* Display results */}
-            <section className="test-grid">
-                {filteredTests.length > 0 ? (
-                    filteredTests.map(test => (
-                        <TestCard 
-                            key={test.id} 
-                            test={test} 
-                            onAddToCart={handleAddToCart}
-                            // FIX: Passing the click handler function
-                            onDetailsClick={handleDetailsClick} 
-                            showFullDetails={true} // Display the 'Includes' list on the full page
-                        />
-                    ))
-                ) : (
-                    <div className="no-results">
-                        No tests or packages found matching "{searchQuery}". Try a different term!
-                    </div>
-                )}
-            </section>
-
-            <div className="back-link">
-                <span onClick={() => navigate('/')}>← Back to Home</span>
-            </div>
-        </div>
+  // ✨ Scroll-triggered fade-ins using IntersectionObserver
+  useEffect(() => {
+    const elements = document.querySelectorAll(".test-card");
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.1 }
     );
+
+    elements.forEach((el) => observerRef.current.observe(el));
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [filteredTests]);
+
+  // 🌟 Add to cart
+  const handleAddToCart = (test) => addItem(test);
+
+  // 🔍 Handle search
+  const handleSearch = (e) => {
+    e.preventDefault();
+    navigate(`/tests?search=${encodeURIComponent(searchTerm)}`);
+  };
+
+  // 🧭 Clear filter
+  const clearFilter = () => {
+    setActiveFilter(null);
+    navigate("/tests");
+  };
+
+  return (
+    <div className="test-listing-container">
+      {/* Header Section */}
+      <header className="listing-header">
+        <h1>Book Lab Tests & Health Checkups</h1>
+        <p>
+          Explore a wide range of NABL-certified diagnostic tests and full-body
+          health packages.
+        </p>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="search-bar">
+          <input
+            type="text"
+            placeholder="Search for tests or health checkups..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button type="submit">Search</button>
+        </form>
+
+        {/* Active Filter Display */}
+        {activeFilter && (
+          <div
+            style={{
+              marginTop: "20px",
+              display: "flex",
+              justifyContent: "center",
+              gap: "10px",
+            }}
+          >
+            <span className="pill">{activeFilter}</span>
+            <button onClick={clearFilter} className="link-like">
+              Clear Filter ✕
+            </button>
+          </div>
+        )}
+      </header>
+
+      {/* Grid of Tests */}
+      <div className="test-grid">
+        {filteredTests.length > 0 ? (
+          filteredTests.map((test, i) => (
+            <div
+              key={test.id}
+              className="test-card fade-item"
+              style={{
+                animationDelay: `${i * 0.08}s`,
+              }}
+            >
+              <div className="test-header">
+                <h2>{test.name}</h2>
+                {test.popular && <span className="badge popular-badge">Popular</span>}
+              </div>
+
+              <p className="test-desc">{test.description}</p>
+
+              <div className="test-price">₹{test.price}</div>
+
+              <ul className="test-includes">
+                {test.includes.slice(0, 3).map((inc, idx) => (
+                  <li key={idx}>✔ {inc}</li>
+                ))}
+              </ul>
+
+              <div className="report-time">Reports: {test.reportTime}</div>
+
+              <div className="card-footer">
+                <button
+                  className="primary-button"
+                  onClick={() => handleAddToCart(test)}
+                >
+                  Add to Cart
+                </button>
+                <button
+                  className="secondary-button"
+                  onClick={() => navigate(`/tests/${test.slug}`)}
+                >
+                  View Details
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p style={{ textAlign: "center", marginTop: "40px", color: "#6c757d" }}>
+            No tests found. Try another search or category.
+          </p>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default TestListingPage;

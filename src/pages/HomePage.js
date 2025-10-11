@@ -1,6 +1,6 @@
 // src/pages/HomePage.js
 
-import React, { useState, useEffect } from 'react'; 
+import React, { useRef,useState, useEffect } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -11,7 +11,7 @@ import {   MOCK_TESTS,
   CONCERNS,
   SEASONS} from '../data/TestListingData'; 
 
-// 🎯 ACTION REQUIRED: You MUST replace these paths with the actual paths to your saved images.
+// ðŸŽ¯ ACTION REQUIRED: You MUST replace these paths with the actual paths to your saved images.
 import heroImage1 from '../assets/hero14.png';
 import heroImage2 from '../assets/hero15.png';
 import heroImage3 from '../assets/hero12.png';
@@ -41,7 +41,7 @@ const HERO_SLIDES = [
     {
         preHeadline: "Prevention is better than cure",
         headline: "Full Body Checkups start @",
-        price: "₹1599",
+        price: "â‚¹1599",
         subtext: "Comprehensive health packages with Vitamin D & B12. Reports delivered fast.",
         badgeText: "Reports in 6 hours",
         image: heroImage3,
@@ -61,9 +61,55 @@ const HomePage = () => {
   const userName = currentUser ? currentUser.fullName || currentUser.email : '';
   const currentSlide = HERO_SLIDES[currentSlideIndex]; // Current slide object
 const [activeSlide, setActiveSlide] = useState(0);
+const carouselViewportRef = useRef(null);
+const carouselTrackRef = useRef(null);
 const [carouselPaused, setCarouselPaused] = useState(false);
-const carouselViewportRef = React.useRef(null);
-const carouselTrackRef = React.useRef(null);
+// Add near other hooks:
+const [menuOpen, setMenuOpen] = useState(false);
+const [scrolled, setScrolled] = useState(false);
+useEffect(() => {
+  const onScroll = () => setScrolled(window.scrollY > 6);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  return () => window.removeEventListener('scroll', onScroll);
+}, []);
+
+useEffect(() => {
+  const track = carouselTrackRef.current;
+  if (!track) return;
+
+  let scrollAmount = 0;
+  const scrollSpeed = 0.3; // Adjust for faster/slower scroll
+  let animationFrame;
+
+  const scroll = () => {
+    if (!carouselPaused) {
+      scrollAmount += scrollSpeed;
+      if (scrollAmount >= track.scrollWidth / 2) {
+        scrollAmount = 0; // reset seamlessly
+      }
+      track.scrollLeft = scrollAmount;
+    }
+    animationFrame = requestAnimationFrame(scroll);
+  };
+  
+
+  // Duplicate items for seamless infinite scroll
+  const cloneTrack = () => {
+    const items = Array.from(track.children);
+    items.forEach((item) => {
+      const clone = item.cloneNode(true);
+      clone.setAttribute("aria-hidden", "true");
+      track.appendChild(clone);
+    });
+  };
+
+  if (track.children.length && track.children.length < 20) cloneTrack();
+  animationFrame = requestAnimationFrame(scroll);
+
+  return () => cancelAnimationFrame(animationFrame);
+}, [carouselPaused]);
+
 // Build quick counts for chips
 const countBy = (key, value) =>
   MOCK_TESTS.filter(t => Array.isArray(t[key]) && t[key].includes(value)).length;
@@ -148,17 +194,18 @@ const carouselItems = (() => {
 // === Carousel state & refs (use these lengths now) ===
 
 
+// === Carousel state & refs (use these lengths now) ===
+
 // Scroll helpers
 const scrollToIndex = (index) => {
   const viewport = carouselViewportRef.current;
   const track = carouselTrackRef.current;
   if (!viewport || !track) return;
-
   const child = track.children[index];
   if (!child) return;
 
   const left = child.offsetLeft - track.offsetLeft;
-  viewport.scrollTo({ left, behavior: 'smooth' });
+  viewport.scrollTo({ left, behavior: "smooth" });
   setActiveSlide(index);
 };
 
@@ -166,14 +213,41 @@ const goTo = (i) => scrollToIndex(i);
 const slideNext = () => goTo((activeSlide + 1) % carouselItems.length);
 const slidePrev = () => goTo((activeSlide - 1 + carouselItems.length) % carouselItems.length);
 
-// Auto-advance every 4s, even if there are few items (we padded them)
+/* ---------------------------
+   AUTO-SCROLL INFINITE LOOP
+--------------------------- */
 useEffect(() => {
-  if (carouselPaused || carouselItems.length <= 1) return;
-  const id = setInterval(() => {
-    slideNext();
-  }, 4000);
-  return () => clearInterval(id);
-}, [activeSlide, carouselPaused, carouselItems.length]);
+  const track = carouselTrackRef.current;
+  if (!track) return;
+
+  // Duplicate slides for seamless infinite scroll
+  const clones = Array.from(track.children).map((child) => {
+    const clone = child.cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    track.appendChild(clone);
+    return clone;
+  });
+
+  let scrollPos = 0;
+  const scrollSpeed = 0.4; // Adjust speed
+  let frame;
+
+  const smoothScroll = () => {
+    if (!carouselPaused) {
+      scrollPos += scrollSpeed;
+      if (scrollPos >= track.scrollWidth / 2) scrollPos = 0;
+      track.scrollLeft = scrollPos;
+    }
+    frame = requestAnimationFrame(smoothScroll);
+  };
+
+  frame = requestAnimationFrame(smoothScroll);
+  return () => {
+    cancelAnimationFrame(frame);
+    clones.forEach((c) => c.remove());
+  };
+}, [carouselPaused, carouselItems.length]);
+
 
 // Sync active dot when user drags/scrolls
 useEffect(() => {
@@ -195,168 +269,266 @@ useEffect(() => {
   return () => viewport && viewport.removeEventListener('scroll', onScroll);
 }, []);
 
+useEffect(() => {
+  const track = document.querySelector(".season-track");
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  if (!track) return;
+
+  track.addEventListener("mousedown", (e) => {
+    isDown = true;
+    track.classList.add("active");
+    startX = e.pageX - track.offsetLeft;
+    scrollLeft = track.scrollLeft;
+  });
+  track.addEventListener("mouseleave", () => {
+    isDown = false;
+    track.classList.remove("active");
+  });
+  track.addEventListener("mouseup", () => {
+    isDown = false;
+    track.classList.remove("active");
+  });
+  track.addEventListener("mousemove", (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - track.offsetLeft;
+    const walk = (x - startX) * 2; // scroll-fast
+    track.scrollLeft = scrollLeft - walk;
+  });
+}, []);
+
+
 
 
   return (
     <div className="homepage-container">
       {/* --- HEADER/NAVBAR --- */}
-      <header className="app-header">
-        <div className="logo" onClick={() => navigate('/')}>
-          <img 
-                            src={logo} // Dynamic image source
-                        />
-        </div>
-        <nav className="header-nav">
-          {currentUser ? (
-            <>
-              <span className="user-greeting">Hello, {userName.split(' ')[0]}</span>
-              <button onClick={() => navigate('/dashboard')} className="header-button primary-button">
-                My Dashboard
-              </button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => navigate('/login')} className="header-button secondary-button">
-                Login
-              </button>
-              <button onClick={() => navigate('/signup')} className="header-button primary-button">
-                Book a Test
-              </button>
-            </>
-          )}
-            <button className="header-button cart-button" onClick={() => navigate('/cart')}>
-                🛒 Cart ({totalItems})
-            </button>
-            
-            {currentUser && (
-                <button onClick={handleLogout} className="header-button secondary-button">
-                    Logout
-                </button>
-            )}
-        </nav>
-      </header>
-      
+     <header className={`app-header ${scrolled ? 'scrolled' : ''}`}>
+  <div className="logo" onClick={() => navigate('/')} aria-label="Go to home">
+    <img src={logo} alt="PiiderLab" />
+  </div>
+
+  {/* Desktop nav */}
+  <nav className="header-nav">
+    {currentUser ? (
+      <>
+        <span className="user-greeting">Hello, {userName.split(' ')[0]}</span>
+        <button onClick={() => navigate('/dashboard')} className="header-button primary-button with-sheen">
+          My Dashboard
+        </button>
+      </>
+    ) : (
+      <>
+        <button onClick={() => navigate('/login')} className="header-button secondary-button">
+          Login
+        </button>
+        <button onClick={() => navigate('/signup')} className="header-button primary-button with-sheen">
+          Book a Test
+        </button>
+      </>
+    )}
+
+    <button className="header-button cart-button" onClick={() => navigate('/cart')} aria-label="Open cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M6 6h15l-1.5 9h-12L6 6Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="9" cy="20" r="1.6" fill="currentColor"/>
+        <circle cx="17" cy="20" r="1.6" fill="currentColor"/>
+      </svg>
+      <span className="cart-label">Cart</span>
+      <span className="cart-badge">{totalItems}</span>
+    </button>
+
+    {currentUser && (
+      <button onClick={handleLogout} className="header-button secondary-button">
+        Logout
+      </button>
+    )}
+  </nav>
+
+  {/* Mobile hamburger */}
+  <button
+    className={`hamburger ${menuOpen ? 'open' : ''}`}
+    onClick={() => setMenuOpen((v) => !v)}
+    aria-label="Toggle menu"
+    aria-expanded={menuOpen}
+  >
+    <span />
+    <span />
+    <span />
+  </button>
+
+  {/* Mobile panel */}
+  <div className={`mobile-panel ${menuOpen ? 'show' : ''}`}>
+    {currentUser ? (
+      <>
+        <button onClick={() => { setMenuOpen(false); navigate('/dashboard'); }} className="mp-link">
+          My Dashboard
+        </button>
+        <button onClick={() => { setMenuOpen(false); navigate('/cart'); }} className="mp-link">
+          Cart ({totalItems})
+        </button>
+        <button onClick={() => { setMenuOpen(false); handleLogout(); }} className="mp-link ghost">
+          Logout
+        </button>
+      </>
+    ) : (
+      <>
+        <button onClick={() => { setMenuOpen(false); navigate('/login'); }} className="mp-link ghost">
+          Login
+        </button>
+        <button onClick={() => { setMenuOpen(false); navigate('/signup'); }} className="mp-link solid">
+          Book a Test
+        </button>
+        <button onClick={() => { setMenuOpen(false); navigate('/cart'); }} className="mp-link">
+          Cart ({totalItems})
+        </button>
+      </>
+    )}
+  </div>
+</header>
+
       {/* -------------------------------------------------------------------- */}
       {/* --- HERO SECTION: FINAL HIGH-IMPACT LAYOUT --- */}
       {/* -------------------------------------------------------------------- */}
-      <section className="hero-section">
-          {/* Main card container with rounded white background and shadow */}
-          <div className="hero-main-card">
-              
-              <div className="hero-content-wrapper">
-                  
-                  {/* Left Column: Text and Search Block */}
-                  <div key={currentSlideIndex} className="hero-main-content slide-text-content">
-                      
-                      <p className="hero-pre-headline">{currentSlide.preHeadline}</p>
+     {/* ====================== HERO SECTION (updated) ====================== */}
+<section className="hero-section">
+  {/* Main card container with rounded white background and shadow */}
+  <div className="hero-main-card">
+    <div className="hero-content-wrapper">
+      {/* Left Column: Text + Search */}
+      <div
+        key={currentSlideIndex}
+        className="hero-main-content slide-text-content"
+        data-slide={currentSlideIndex}   // <-- enables subtle re-animate on slide change
+      >
+        <p className="hero-pre-headline">{currentSlide.preHeadline}</p>
 
-                      <h1 className="hero-headline">
-                          {/* If a price exists, render the '@ price' as a highlighted segment */}
-                          {currentSlide.price ? (
-                            <>
-                              {currentSlide.headline} <span className="highlight-text">@ {currentSlide.price}</span>
-                            </>
-                          ) : (
-                            currentSlide.headline
-                          )}
-                      </h1>
-                      
-                      {/* Reports badge */}
-                      <div className="hero-badge">
-                          {currentSlide.badgeText}
-                      </div>
-                      
-                      <p className="hero-subtext">
-                          {currentSlide.subtext}
-                      </p>
+        <h1 className="hero-headline">
+          {currentSlide.price ? (
+            <>
+              {currentSlide.headline}{" "}
+              <span className="highlight-text">@ {currentSlide.price}</span>
+            </>
+          ) : (
+            currentSlide.headline
+          )}
+        </h1>
 
-                      {/* MODERN SEARCH BLOCK */}
-                      <div className="modern-search-block">
-                          
-                          <form onSubmit={handleSearch} className="search-bar-form-modern" role="search" aria-label="Search tests">
-                              <input
-                                  type="text"
-                                  placeholder="Search for tests or checkups"
-                                  value={searchQuery}
-                                  onChange={(e) => setSearchQuery(e.target.value)}
-                                  className="search-input-modern"
-                                  required
-                              />
-                              <div className="search-buttons-group" role="group" aria-label="Search categories">
-                                  <button type="submit" className="search-button-group lab-tests-btn">
-                                      Lab Tests 🔬
-                                  </button>
-                                  <button type="button" className="search-button-group checkups-btn" onClick={() => navigate('/tests?category=checkups')}>
-                                      Checkups ✅
-                                  </button>
-                              </div>
-                          </form>
-                      </div>
-                      
-                      {/* Offer Badge below Search Block */}
-                      <div className="search-offer-badge">
-                          Get 15% OFF* on orders above ₹500 | Use: ORANGE15
-                      </div>
-                      
-                      {/* SLIDER CONTROLS (Dots) */}
-                      <div className="slider-dots-container" aria-hidden="false">
-                          {HERO_SLIDES.map((_, index) => (
-                              <button
-                                  key={index}
-                                  className={`slider-dot ${index === currentSlideIndex ? 'active' : ''}`}
-                                  onClick={() => setCurrentSlideIndex(index)}
-                                  aria-label={`Go to slide ${index + 1}`}
-                                  style={{ border: 'none', background: 'transparent', padding: 0 }}
-                              >
-                                  <span className={`slider-dot ${index === currentSlideIndex ? 'active' : ''}`} />
-                              </button>
-                          ))}
-                      </div>
-                  </div>
+        {/* Reports badge */}
+        <div className="hero-badge">{currentSlide.badgeText}</div>
 
-                  {/* Right Column: Dynamic Image (wrapped for cropping / styling) */}
-                  <div className="hero-image-container" aria-hidden="true">
-                      <div className="hero-image-wrapper keyframe-fade-image" key={currentSlideIndex + '-wrapper'}>
-                        <img 
-                            key={currentSlideIndex + '-img'} // Separate key for image to trigger animation
-                            src={currentSlide.image} // Dynamic image source
-                            alt={currentSlide.imageAlt} // Dynamic image alt text
-                            className="hero-main-image" 
-                        />
-                      </div>
+        <p className="hero-subtext">{currentSlide.subtext}</p>
 
-                      {/* decorative glow behind image */}
-                      <div className="image-blob-background" />
-                  </div>
-              </div>
-          </div>
+        {/* MODERN SEARCH BLOCK */}
+        <div className="modern-search-block">
+          <form
+            onSubmit={handleSearch}
+            className="search-bar-form-modern"
+            role="search"
+            aria-label="Search tests"
+          >
+            <input
+              type="text"
+              placeholder="Search for tests or checkups"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input-modern"
+              required
+            />
+            <div className="search-buttons-group" role="group" aria-label="Search categories">
+              <button type="submit" className="search-button-group lab-tests-btn">
+                Lab Tests
+              </button>
+              <button
+                type="button"
+                className="search-button-group checkups-btn"
+                onClick={() => navigate("/tests?category=checkups")}
+              >
+                Checkups
+              </button>
+            </div>
+          </form>
+        </div>
 
-          {/* Trust Badges moved outside the card, using the CSS class hero-trust-badges */}
-          {/* <div className="hero-trust-badges" aria-hidden="false">
-              <span>⭐ 4.8/5 Rated Service</span>
-              <span>✅ NABL & ICMR Certified</span>
-              <span>⏱️ Free Home Collection</span>
-          </div> */}
-      </section>
-      
+        {/* Offer Badge below Search Block */}
+        <div className="search-offer-badge">
+          Get 15% OFF* on orders above ₹500 | Use: ORANGE15
+        </div>
+
+        {/* SLIDER CONTROLS (Dots) */}
+        <div className="slider-dots-container" aria-hidden="false">
+          {HERO_SLIDES.map((_, index) => (
+            <button
+              key={index}
+              className={`slider-dot ${index === currentSlideIndex ? "active" : ""}`}
+              onClick={() => setCurrentSlideIndex(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              style={{ border: "none", background: "transparent", padding: 0 }}
+            >
+              <span className={`slider-dot ${index === currentSlideIndex ? "active" : ""}`} />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Right Column: Dynamic Image */}
+      <div className="hero-image-container" aria-hidden="true">
+        <div
+          className="hero-image-wrapper keyframe-fade-image parallax-tilt" // <-- adds subtle 3D tilt on hover
+          key={currentSlideIndex + "-wrapper"}
+        >
+          <img
+            key={currentSlideIndex + "-img"} // Separate key for image to trigger animation
+            src={currentSlide.image}
+            alt={currentSlide.imageAlt}
+            className="hero-main-image"
+          />
+        </div>
+
+        {/* decorative glow behind image */}
+        <div className="image-blob-background" />
+      </div>
+    </div>
+  </div>
+
+  {/* (Optional) Trust Badges */}
+  {/* 
+  <div className="hero-trust-badges" aria-hidden="false">
+    <span>⭐ 4.8/5 Rated Service</span>
+    <span>✅ NABL & ICMR Certified</span>
+    <span>⏱️ Free Home Collection</span>
+  </div> 
+  */}
+</section>
+
       {/* --- FEATURED TESTS (Unchanged) --- */}
-     {/* === POPULAR CHECKS — AUTO CAROUSEL === */}
-<section className="carousel-section"
-         onMouseEnter={() => setCarouselPaused(true)}
-         onMouseLeave={() => setCarouselPaused(false)}>
+     {/* === POPULAR CHECKS â€” AUTO CAROUSEL === */}
+<section
+  className="carousel-section"
+  onMouseEnter={() => setCarouselPaused(true)}
+  onMouseLeave={() => setCarouselPaused(false)}
+>
   <h2>Popular Health Checks Near You</h2>
   <p className="section-subtext">Book our most popular packages and single tests instantly.</p>
 
   <div className="carousel-viewport" ref={carouselViewportRef}>
     <div className="carousel-track" ref={carouselTrackRef}>
       {carouselItems.map((item, idx) => (
-        <div className="carousel-item" key={`${item.id}-${item._cloneIdx ?? 'base'}`}>
+        <div
+          className="carousel-item"
+          key={`${item.id}-${item._cloneIdx ?? 'base'}`}
+          data-active={idx === activeSlide ? 'true' : 'false'}
+        >
           {item._isViewAll ? (
             <button
               className="view-all-card"
               onClick={() => navigate('/tests')}
               aria-label="View all tests and packages"
             >
+              <span className="va-sheen" />
               <div className="va-body">
                 <div className="va-title">{item.title}</div>
                 <div className="va-cta">Browse All →</div>
@@ -376,7 +548,11 @@ useEffect(() => {
   </div>
 
   <div className="carousel-controls">
-    <button className="carousel-arrow" onClick={slidePrev} aria-label="Previous">←</button>
+    <button className="carousel-arrow" onClick={slidePrev} aria-label="Previous">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </button>
 
     <div className="carousel-dots">
       {carouselItems.map((_, i) => (
@@ -385,80 +561,183 @@ useEffect(() => {
           className={`carousel-dot ${i === activeSlide ? 'active' : ''}`}
           onClick={() => goTo(i)}
           aria-label={`Go to item ${i + 1}`}
-        />
+        >
+          <span className="dot-fill" />
+        </button>
       ))}
     </div>
 
-    <button className="carousel-arrow" onClick={slideNext} aria-label="Next">→</button>
+    <button className="carousel-arrow" onClick={slideNext} aria-label="Next">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </button>
   </div>
 </section>
+
 
 {/* ===================== Search by Category ===================== */}
-<section className="facet-section">
-  <div className="facet-header">
+{/* === Search by Category (illustrated) === */}
+{/* === Search by Category — Animated Spotlight Cards === */}
+<section className="category-spotlight">
+  <div className="cat-head">
     <h2>Search by Category</h2>
-    <p className="facet-subtext">Quickly browse routine tests, women’s health, cardiac panels, and more.</p>
+    <p>Browse routine checks, women's health, cardiac panels and more.</p>
   </div>
-  <div className="chip-grid">
-    {CATEGORIES.map(c => (
-      <button key={c.key} className="chip" onClick={() => goToCategory(c.key)}>
-        <span className="chip-title">{c.label}</span>
-        <span className="chip-count">{countBy('categories', c.key)}</span>
+
+  <div className="cat-grid">
+    {CATEGORIES.map((c, i) => (
+      <button
+        key={c.key}
+        data-key={c.key}
+        className="cat-card"
+        style={{ animationDelay: `${i * 0.08}s` }}
+        onClick={() => goToCategory(c.key)}
+      >
+        {/* bg image */}
+        {c.img && (
+          <div
+            className="cat-bg"
+            style={{ backgroundImage: `url(${c.img})` }}
+          />
+        )}
+
+        {/* animated gradient blobs */}
+        <span className="cat-blob a" />
+        <span className="cat-blob b" />
+
+        {/* sheen sweep */}
+        <span className="cat-sheen" />
+
+        {/* content */}
+        <div className="cat-content">
+          <span className="cat-icon">{c.icon}</span>
+          <h3>{c.label}</h3>
+          <span className="cat-count">{countBy('categories', c.key)} options</span>
+        </div>
       </button>
     ))}
   </div>
 </section>
+
+
 
 {/* ===================== Search by Organ/System ===================== */}
-<section className="facet-section">
-  <div className="facet-header">
-    <h2>Search by Organ / System</h2>
-    <p className="facet-subtext">Pick a body system to discover relevant tests and packages.</p>
+{/* === Search by Organ / System (pro tiles) === */}
+{/* === For Vital Body Organs (compact, Orange-style) === */}
+{/* === For Vital Body Organs — compact === */}
+{/* === Vital Body Organs Section — Modern Visual Layout === */}
+<section className="organ-section">
+  <div className="organ-header">
+    <h2>For Vital Body Organs</h2>
+    <p>Comprehensive health panels focused on your vital body systems</p>
   </div>
-  <div className="organ-grid">
-    {ORGANS.map(o => (
-      <button key={o.key} className="organ-card" onClick={() => goToOrgan(o.key)}>
-        <div className="organ-icon" aria-hidden>🧬</div>
-        <div className="organ-title">{o.label}</div>
-        <div className="organ-count">{countBy('organs', o.key)} options</div>
-      </button>
-    ))}
+
+  <div className="organ-grid-modern">
+    {ORGANS.map((o) => {
+      const img = o.img || "";
+      return (
+        <button
+          key={o.key}
+          className="organ-card-modern"
+          onClick={() => goToOrgan(o.key)}
+          aria-label={o.label}
+        >
+          <div className="organ-img-wrapper">
+            {img ? (
+              <img
+                src={img}
+                alt={o.label}
+                className="organ-modern-img"
+                loading="lazy"
+              />
+            ) : (
+              <span className="icon-fallback">{o.icon}</span>
+            )}
+          </div>
+          <div className="organ-card-label">{o.label}</div>
+        </button>
+      );
+    })}
   </div>
 </section>
+
+
+
+
 
 {/* ===================== Search by Concern / Life Stage ===================== */}
-<section className="facet-section">
-  <div className="facet-header">
+{/* === Search by Concern / Life Stage (icon chips) === */}
+{/* === Search by Concern / Life Stage — Modern Animated === */}
+{/* === Search by Concern / Life Stage — Animated Motion Section === */}
+<section className="concern-section-animated">
+  <div className="concern-header">
     <h2>Search by Concern / Life Stage</h2>
-    <p className="facet-subtext">Find tests tailored to your situation.</p>
+    <p>Explore personalized health checkups designed around your needs.</p>
   </div>
-  <div className="chip-grid">
-    {CONCERNS.map(cn => (
-      <button key={cn.key} className="chip" onClick={() => goToConcern(cn.key)}>
-        <span className="chip-title">{cn.label}</span>
-        <span className="chip-count">{countBy('concerns', cn.key)}</span>
-      </button>
+
+  <div className="concern-animated-grid">
+    {CONCERNS.map((cn, i) => (
+      <div
+        key={cn.key}
+        className="concern-animated-card"
+        style={{ animationDelay: `${i * 0.12}s` }}
+        onClick={() => goToConcern(cn.key)}
+      >
+        <div className="concern-card-bg" />
+        <div className="concern-icon-bubble">
+          <span className="concern-icon">{cn.icon}</span>
+        </div>
+        <div className="concern-card-text">
+          <h3>{cn.label}</h3>
+          <p>{countBy("concerns", cn.key)} options</p>
+        </div>
+      </div>
     ))}
   </div>
 </section>
 
+
+
+
 {/* ===================== Seasonal / Trending Tests ===================== */}
-<section className="facet-section">
-  <div className="facet-header">
+{/* === Seasonal / Trending (banners) === */}
+{/* === Seasonal / Trending Tests — Animated Carousel === */}
+<section className="seasonal-section">
+  <div className="seasonal-header">
     <h2>Seasonal / Trending Tests</h2>
-    <p className="facet-subtext">Stay ahead of seasonal risks and trending health checks.</p>
+    <p>Stay ahead of seasonal health risks and trending checkups.</p>
   </div>
 
-  <div className="chip-row">
-    {SEASONS.map(s => (
-      <button key={s.key} className="chip small" onClick={() => goToSeason(s.key)}>
-        <span className="chip-title">{s.label}</span>
-      </button>
-    ))}
+  <div className="season-carousel">
+    <div className="season-track">
+      {[...SEASONS, ...SEASONS].map((s, i) => (
+        <div
+          key={`${s.key}-${i}`}
+          data-key={s.key}
+          className="season-slide"
+          onClick={() => goToSeason(s.key)}
+        >
+          {s.img && (
+            <div
+              className="slide-bg"
+              style={{ backgroundImage: `url(${s.img})` }}
+            />
+          )}
+          <div className="slide-overlay" />
+          <div className="slide-content">
+            {/* <div className="slide-icon">{s.icon}</div> */}
+            <h3>{s.label}</h3>
+            <span className="slide-cta">Explore →</span>
+          </div>
+        </div>
+      ))}
+    </div>
   </div>
 
-  <div className="test-grid compact" style={{ marginTop: 16 }}>
-    {TRENDING.map(test => (
+  {/* trending compact grid below */}
+  {/* <div className="test-grid compact" style={{ marginTop: 32 }}>
+    {TRENDING.map((test) => (
       <TestCard
         key={test.id}
         test={test}
@@ -469,10 +748,13 @@ useEffect(() => {
     ))}
   </div>
 
-  <div className="view-all-link" style={{ marginTop: 12 }}>
-    <span onClick={() => navigate('/tests')}>View All {MOCK_TESTS.length} Tests & Packages →</span>
-  </div>
+  <div className="view-all-link" style={{ marginTop: 16 }}>
+    <span onClick={() => navigate("/tests")}>
+      View All {MOCK_TESTS.length} Tests & Packages →
+    </span>
+  </div> */}
 </section>
+
 
 
 
