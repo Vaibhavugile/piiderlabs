@@ -1,7 +1,7 @@
 // src/pages/TestDetailPage.js
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { MOCK_TESTS } from "../data/TestListingData";
+import { MOCK_TESTS,TestCard } from "../data/TestListingData";
 import { useCart } from "../context/CartContext";
 import "./TestDetailPage.css";
 
@@ -18,10 +18,14 @@ const TestDetailPage = () => {
   const params = useParams();
   const routeParam = params.testId || params.slug || params.id || Object.values(params)[0];
   const navigate = useNavigate();
+  const goToCategory = (key) => navigate(`/tests?category=${encodeURIComponent(key)}`);
+  const goToOrgan = (key) => navigate(`/tests?organ=${encodeURIComponent(key)}`);
+  const goToConcern = (key) => navigate(`/tests?concern=${encodeURIComponent(key)}`);
+  const goToSeason = (key) => navigate(`/tests?season=${encodeURIComponent(key)}`);
 
   // unconditionally call hook
   const cartCtx = useCart();
-  const addItem = (cartCtx && cartCtx.addItem) || (() => {});
+  const addItem = (cartCtx && cartCtx.addItem) || (() => { });
   const totalItems = (cartCtx && typeof cartCtx.totalItems === "number") ? cartCtx.totalItems : 0;
 
   const [test, setTest] = useState(null);
@@ -128,7 +132,7 @@ const TestDetailPage = () => {
         >
           {/* accessible SVG back icon */}
           <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="#003049" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M15 18L9 12L15 6" stroke="#003049" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
         <div style={{ fontWeight: 700, color: "var(--muted-blue)" }}>{safeTest.category || "Test Details"}</div>
@@ -144,7 +148,7 @@ const TestDetailPage = () => {
             <p className="test-alias">Also Known As: {safeTest.includes.join(", ")}</p>
           )}
 
-          { (details.about || safeTest.shortDescription) && (
+          {(details.about || safeTest.shortDescription) && (
             <p className="td-sub">{details.about || safeTest.shortDescription}</p>
           )}
 
@@ -173,8 +177,23 @@ const TestDetailPage = () => {
 
           <div className="td-hero-tags">
             {safeTest.discount && <span className="pill">Save {safeTest.discount}</span>}
+
             <span className="pill-light">Free Home Collection</span>
             <span className="pill-light">NABL Certified</span>
+            {/* taxonomy pills (clickable) */}
+            {Array.isArray(safeTest.categories) && safeTest.categories.map(k => (
+              <button key={`cat-${k}`} className="pill-link" onClick={() => goToCategory(k)}>#{k}</button>
+            ))}
+            {Array.isArray(safeTest.organs) && safeTest.organs.map(k => (
+              <button key={`org-${k}`} className="pill-link" onClick={() => goToOrgan(k)}>#{k}</button>
+            ))}
+            {Array.isArray(safeTest.concerns) && safeTest.concerns.map(k => (
+              <button key={`con-${k}`} className="pill-link" onClick={() => goToConcern(k)}>#{k}</button>
+            ))}
+            {Array.isArray(safeTest.seasons) && safeTest.seasons.map(k => (
+              <button key={`sea-${k}`} className="pill-link" onClick={() => goToSeason(k)}>#{k}</button>
+            ))}
+
           </div>
         </div>
 
@@ -185,14 +204,14 @@ const TestDetailPage = () => {
             <div className="hero-image-placeholder" aria-hidden="true">
               {/* simple placeholder */}
               <svg width="280" height="160" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect rx="8" width="280" height="160" fill="#fff" stroke="#eee"/>
+                <rect rx="8" width="280" height="160" fill="#fff" stroke="#eee" />
                 <g transform="translate(18,18)" fill="#f2f4f6">
-                  <rect width="84" height="84" rx="8"/>
+                  <rect width="84" height="84" rx="8" />
                 </g>
                 <g transform="translate(120,20)">
-                  <rect width="120" height="12" rx="6"/>
-                  <rect y="28" width="104" height="10" rx="6"/>
-                  <rect y="52" width="80" height="10" rx="6"/>
+                  <rect width="120" height="12" rx="6" />
+                  <rect y="28" width="104" height="10" rx="6" />
+                  <rect y="52" width="80" height="10" rx="6" />
                 </g>
               </svg>
             </div>
@@ -248,7 +267,7 @@ const TestDetailPage = () => {
                 {markers.length ? (
                   <ul className="included-tests-list">
                     {markers.map((m, i) => (
-                      <li key={i}><strong>{m.name || m.param || `Marker ${i+1}`}</strong><div className="info-subtext">{m.info || m.desc || ""}</div></li>
+                      <li key={i}><strong>{m.name || m.param || `Marker ${i + 1}`}</strong><div className="info-subtext">{m.info || m.desc || ""}</div></li>
                     ))}
                   </ul>
                 ) : <p>No parameter information available.</p>}
@@ -314,6 +333,36 @@ const TestDetailPage = () => {
           </div>
         </aside>
       </div>
+      {/* Related Tests */}
+      <div className="detail-section" style={{ marginTop: 28 }}>
+        <h2>Related tests</h2>
+        <p className="card-description">You might also be interested in these.</p>
+        <div className="test-grid compact" style={{ marginTop: 12 }}>
+          {MOCK_TESTS
+            .filter(t => t.id !== safeTest.id)
+            .map(t => {
+              const overlap =
+                (safeTest.categories || []).some(k => (t.categories || []).includes(k)) ||
+                (safeTest.organs || []).some(k => (t.organs || []).includes(k)) ||
+                (safeTest.concerns || []).some(k => (t.concerns || []).includes(k)) ||
+                (safeTest.seasons || []).some(k => (t.seasons || []).includes(k));
+              return overlap ? t : null;
+            })
+            .filter(Boolean)
+            .slice(0, 6)
+            .map(t => (
+              <TestCard
+                key={t.id}
+                test={t}
+                onAddToCart={() => addItem({ id: t.id, name: t.name, price: t.price || 0 })}
+                onDetailsClick={(id) => navigate(`/tests/${t.slug || id}`)}
+                variant="compact"
+              />
+            ))
+          }
+        </div>
+      </div>
+
     </div>
   );
 };

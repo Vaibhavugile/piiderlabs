@@ -2,6 +2,45 @@
 
 import React from 'react';
 // We don't need to use `useNavigate` here, we'll pass the handler from the parent.
+// ------- Taxonomies (filters) -------
+export const CATEGORIES = [
+  { key: 'routine', label: 'Routine Tests' },
+  { key: 'womens-health', label: "Women's Health" },
+  { key: 'senior-wellness', label: 'Senior Wellness' },
+  { key: 'cardiac', label: 'Cardiac Panel' },
+  { key: 'allergy', label: 'Allergy Tests' },
+  { key: 'infectious', label: 'Infectious Diseases' },
+  { key: 'full-body', label: 'Full Body Checkups' },
+  { key: 'diabetes', label: 'Diabetes Care' },
+  { key: 'vitamins', label: 'Vitamins & Minerals' },
+];
+
+export const ORGANS = [
+  { key: 'heart', label: 'Heart & Vascular' },
+  { key: 'liver', label: 'Liver & Digestive' },
+  { key: 'kidney', label: 'Kidney & Urinary' },
+  { key: 'respiratory', label: 'Respiratory & Lungs' },
+  { key: 'bone', label: 'Bones & Joints' },
+  { key: 'skin-allergy', label: 'Skin & Allergy' },
+  { key: 'hormones', label: 'Hormones & Glands' },
+  { key: 'general-blood', label: 'General Blood Health' },
+];
+
+export const CONCERNS = [
+  { key: 'fatigue', label: 'Feeling Fatigued' },
+  { key: 'pre-pregnancy', label: 'Pre-pregnancy Check' },
+  { key: 'post-surgery', label: 'Post-surgery' },
+  { key: 'annual', label: 'Annual Full-Body Scan' },
+  { key: 'travel', label: 'Travel Required Tests' },
+  { key: 'senior', label: 'Senior Citizen Screening' },
+  { key: 'kids', label: 'Kids & Adolescents' },
+];
+
+export const SEASONS = [
+  { key: 'monsoon', label: 'Monsoon (Dengue/Malaria/Typhoid)' },
+  { key: 'winter', label: 'Winter (Vit-D/Calcium)' },
+  { key: 'newyear', label: 'New Year Thyroid + Glucose' },
+];
 
 // --- MOCK DATA ---
 export const MOCK_TESTS = [
@@ -15,6 +54,11 @@ export const MOCK_TESTS = [
         description: 'Comprehensive annual checkup covering 70+ parameters. Recommended for all ages.',
         reportTime: '24 hours',
         preparation: '10-12 hours fasting is required.',
+        categories: ['full-body'],
+        organs: ['heart', 'liver', 'kidney', 'hormones', 'general-blood'],
+        concerns: ['annual', 'senior'],
+        seasons: ['newyear', 'winter'],
+        trendingScore: 98,
         testDetails: { 
             purpose: "To provide a complete overview of your health status across multiple organs and systems.",
             markers: [
@@ -51,6 +95,11 @@ export const MOCK_TESTS = [
         description: 'The CBC test is a standard blood test that helps in assessing your general health and monitoring different cell types in the blood.',
         reportTime: '6 hours',
         preparation: 'No Fasting Required',
+        categories: ['routine'],
+        organs: ['general-blood'],
+        concerns: ['annual', 'kids'],
+        seasons: ['monsoon', 'newyear'],
+        trendingScore: 92,
         testDetails: {
             purpose: "Measuring red blood cells, white blood cells, haemoglobin, hematocrit, and platelets to diagnose conditions like infection and anemia.",
             markers: [
@@ -89,6 +138,11 @@ export const MOCK_TESTS = [
         description: 'Measures the body\'s main storage form of Vitamin D. Crucial for bone health.',
         reportTime: '18 hours',
         preparation: 'No fasting required.',
+        categories: ['vitamins'],
+        organs: ['bone', 'hormones'],
+        concerns: ['fatigue', 'senior'],
+        seasons: ['winter'],
+        trendingScore: 86,
         testDetails: {
             purpose: "Determine if vitamin D levels are sufficient, low, or toxic.",
             markers: [
@@ -118,6 +172,11 @@ export const MOCK_TESTS = [
         description: 'A dedicated package for monitoring and managing diabetes risk and conditions.',
         reportTime: '24 hours',
         preparation: '10-12 hours overnight fasting is required.',
+        categories: ['diabetes'],
+        organs: ['hormones', 'heart'],
+        concerns: ['annual', 'senior'],
+        seasons: ['newyear'],
+        trendingScore: 90,
         testDetails: {
             purpose: "Diagnose or monitor diabetes and assess the risk of cardiovascular complications.",
             markers: [
@@ -151,6 +210,11 @@ export const MOCK_TESTS = [
         description: 'Assesses the risk of heart and vascular diseases by checking fat levels in the blood.',
         reportTime: '12 hours',
         preparation: '8-10 hours fasting required.',
+        categories: ['cardiac', 'routine'],
+        organs: ['heart'],
+        concerns: ['annual', 'senior'],
+        seasons: ['newyear'],
+        trendingScore: 84,
         testDetails: {
             purpose: "To evaluate cardiovascular risk by measuring different types of fat (lipids) in the blood.",
             markers: [

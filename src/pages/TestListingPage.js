@@ -4,42 +4,80 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../context/CartContext'; // Import useCart
 import { useAuth } from '../context/AuthContext';
-import { MOCK_TESTS, TestCard } from '../data/TestListingData'; 
+import {  MOCK_TESTS,
+  TestCard,
+  CATEGORIES,
+  ORGANS,
+  CONCERNS,
+  SEASONS} from '../data/TestListingData'; 
 import './TestListingPage.css'; 
 
 const TestListingPage = () => {
     const { currentUser } = useAuth();
     const { addItem } = useCart(); // Get addItem function
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [loading, setLoading] = useState(false); 
-    
+    const [searchParams, setSearchParams] = useSearchParams();
+const has = (arr, key) => Array.isArray(arr) && arr.includes(key);
+const textMatch = (t, q) =>
+  t.name.toLowerCase().includes(q) ||
+  (Array.isArray(t.includes) && t.includes.some(i => String(i).toLowerCase().includes(q)));
+const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+const category = searchParams.get('category') || '';
+const organ    = searchParams.get('organ') || '';
+const concern  = searchParams.get('concern') || '';
+const season   = searchParams.get('season') || '';
+const sort     = searchParams.get('sort') || ''; // optional: 'trending' | 'price-asc' | 'price-desc'
+
+useEffect(() => {
+  setSearchQuery(searchParams.get('search') || '');
+}, [searchParams]);
+
     // ---------------------------------------------
     // 1. FILTERING LOGIC 
     // ---------------------------------------------
-    const filteredTests = useMemo(() => {
-        if (!searchQuery) {
-            return MOCK_TESTS;
-        }
+   const filteredTests = useMemo(() => {
+  let list = [...MOCK_TESTS];
 
-        const lowerCaseQuery = searchQuery.toLowerCase();
-        
-        return MOCK_TESTS.filter(test => 
-            test.name.toLowerCase().includes(lowerCaseQuery) ||
-            test.includes.some(item => item.toLowerCase().includes(lowerCaseQuery))
-        );
-    }, [searchQuery]);
+  // facet filters
+  if (category) list = list.filter(t => has(t.categories, category));
+  if (organ)    list = list.filter(t => has(t.organs, organ));
+  if (concern)  list = list.filter(t => has(t.concerns, concern));
+  if (season)   list = list.filter(t => has(t.seasons, season));
+
+  // text filter
+  const q = (searchQuery || '').toLowerCase().trim();
+  if (q) list = list.filter(t => textMatch(t, q));
+
+  // optional sort
+  if (sort === 'trending') list.sort((a,b) => (b.trendingScore||0) - (a.trendingScore||0));
+  if (sort === 'price-asc') list.sort((a,b) => (a.price||0) - (b.price||0));
+  if (sort === 'price-desc') list.sort((a,b) => (b.price||0) - (a.price||0));
+
+  return list;
+}, [searchQuery, category, organ, concern, season, sort]);
+
+
+// normalize for safe array checks
 
 
     // ---------------------------------------------
     // 2. SEARCH HANDLERS 
     // ---------------------------------------------
-    const handleSearchSubmit = (e) => {
-        e.preventDefault();
-        // Update URL search parameter
-        navigate(`/tests?search=${searchQuery}`);
-    };
+   const handleSearchSubmit = (e) => {
+  e.preventDefault();
+  const next = new URLSearchParams(searchParams);
+  if (searchQuery) next.set('search', searchQuery);
+  else next.delete('search');
+  setSearchParams(next);
+};
+const clearAllFilters = () => setSearchParams(new URLSearchParams());
+const setSort = (val) => {
+  const next = new URLSearchParams(searchParams);
+  if (val) next.set('sort', val); else next.delete('sort');
+  setSearchParams(next);
+};
+
 
     // ---------------------------------------------
     // 3. CART HANDLER
@@ -81,6 +119,33 @@ const TestListingPage = () => {
                     />
                     <button type="submit">Search</button>
                 </form>
+                {/* Active filters row */}
+<div className="active-filters" style={{display:'flex',flexWrap:'wrap',gap:8,alignItems:'center',marginTop:10}}>
+  {(category || organ || concern || season || searchQuery) ? (
+    <>
+      {category && <span className="pill">Category: {CATEGORIES.find(c=>c.key===category)?.label || category}</span>}
+      {organ && <span className="pill">Organ: {ORGANS.find(o=>o.key===organ)?.label || organ}</span>}
+      {concern && <span className="pill">Concern: {CONCERNS.find(c=>c.key===concern)?.label || concern}</span>}
+      {season && <span className="pill">Season: {SEASONS.find(s=>s.key===season)?.label || season}</span>}
+      {searchQuery && <span className="pill">Search: “{searchQuery}”</span>}
+      <button className="link-like" onClick={clearAllFilters}>Clear all</button>
+    </>
+  ) : (
+    <span style={{color:'#6c757d'}}>Tip: use filters or search to narrow results.</span>
+  )}
+
+  {/* Sort control */}
+  <div style={{marginLeft:'auto',display:'flex',gap:6,alignItems:'center'}}>
+    <label htmlFor="sort" style={{color:'#6c757d'}}>Sort</label>
+    <select id="sort" value={sort} onChange={e=>setSort(e.target.value)}>
+      <option value="">Relevance</option>
+      <option value="trending">Trending</option>
+      <option value="price-asc">Price: Low → High</option>
+      <option value="price-desc">Price: High → Low</option>
+    </select>
+  </div>
+</div>
+
             </header>
 
             {/* Display results */}

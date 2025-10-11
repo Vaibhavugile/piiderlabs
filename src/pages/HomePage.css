@@ -703,3 +703,108 @@ html, body, #root { height: 100%; margin: 0; padding: 0; }
   padding: 8px 12px;
   box-shadow: 0 8px 18px rgba(3,10,18,0.06);
 }
+
+
+/* ================== Faceted Sections (chips & organ grid) ================== */
+.facet-section {
+  padding: 48px 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafb 100%);
+}
+.facet-section:nth-of-type(even) {
+  background: linear-gradient(135deg, var(--hero-bg-start) 0%, var(--hero-bg-end) 100%);
+}
+
+.facet-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 18px;
+}
+.facet-header h2 {
+  font-size: 1.8rem;
+  color: var(--secondary-color);
+  margin: 0 0 6px;
+  font-weight: 900;
+}
+.facet-subtext {
+  color: #6c757d;
+}
+
+/* Chips */
+.chip-grid {
+  max-width: 1100px;
+  margin: 18px auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.chip-row {
+  max-width: 900px;
+  margin: 8px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.45);
+  box-shadow: 0 10px 26px rgba(6,18,30,0.06);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  font-weight: 800;
+  color: var(--secondary-color);
+}
+.chip:hover {
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 18px 42px rgba(6,18,30,0.12);
+}
+.chip.small {
+  padding: 10px 12px;
+  font-weight: 700;
+}
+.chip-title { white-space: nowrap; }
+.chip-count {
+  background: #f4f6f8;
+  border: 1px solid rgba(3,10,18,0.06);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+/* Organ cards (visual grid) */
+.organ-grid {
+  max-width: 1100px;
+  margin: 18px auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.organ-card {
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(255,255,255,0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(6,18,30,0.07);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+.organ-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 22px 50px rgba(6,18,30,0.12);
+}
+.organ-icon { font-size: 1.4rem; }
+.organ-title { font-weight: 900; font-size: 1.05rem; color: var(--secondary-color); margin-top: 6px; }
+.organ-count { color: #6c757d; font-weight: 700; margin-top: 2px; }

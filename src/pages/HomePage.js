@@ -4,7 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { MOCK_TESTS, TestCard } from '../data/TestListingData'; 
+import {   MOCK_TESTS,
+  TestCard,
+  CATEGORIES,
+  ORGANS,
+  CONCERNS,
+  SEASONS} from '../data/TestListingData'; 
 
 // 🎯 ACTION REQUIRED: You MUST replace these paths with the actual paths to your saved images.
 import heroImage1 from '../assets/hero14.png';
@@ -59,6 +64,21 @@ const [activeSlide, setActiveSlide] = useState(0);
 const [carouselPaused, setCarouselPaused] = useState(false);
 const carouselViewportRef = React.useRef(null);
 const carouselTrackRef = React.useRef(null);
+// Build quick counts for chips
+const countBy = (key, value) =>
+  MOCK_TESTS.filter(t => Array.isArray(t[key]) && t[key].includes(value)).length;
+
+// Navigate helpers
+const goToCategory = (key) => navigate(`/tests?category=${encodeURIComponent(key)}`);
+const goToOrgan    = (key) => navigate(`/tests?organ=${encodeURIComponent(key)}`);
+const goToConcern  = (key) => navigate(`/tests?concern=${encodeURIComponent(key)}`);
+const goToSeason   = (key) => navigate(`/tests?season=${encodeURIComponent(key)}`);
+
+// Trending list (top N by score)
+const TRENDING = [...MOCK_TESTS]
+  .filter(t => Number.isFinite(t.trendingScore))
+  .sort((a,b) => b.trendingScore - a.trendingScore)
+  .slice(0, 8);
 
 
   // --- SLIDER AUTO-ADVANCE LOGIC ---
@@ -372,6 +392,88 @@ useEffect(() => {
     <button className="carousel-arrow" onClick={slideNext} aria-label="Next">→</button>
   </div>
 </section>
+
+{/* ===================== Search by Category ===================== */}
+<section className="facet-section">
+  <div className="facet-header">
+    <h2>Search by Category</h2>
+    <p className="facet-subtext">Quickly browse routine tests, women’s health, cardiac panels, and more.</p>
+  </div>
+  <div className="chip-grid">
+    {CATEGORIES.map(c => (
+      <button key={c.key} className="chip" onClick={() => goToCategory(c.key)}>
+        <span className="chip-title">{c.label}</span>
+        <span className="chip-count">{countBy('categories', c.key)}</span>
+      </button>
+    ))}
+  </div>
+</section>
+
+{/* ===================== Search by Organ/System ===================== */}
+<section className="facet-section">
+  <div className="facet-header">
+    <h2>Search by Organ / System</h2>
+    <p className="facet-subtext">Pick a body system to discover relevant tests and packages.</p>
+  </div>
+  <div className="organ-grid">
+    {ORGANS.map(o => (
+      <button key={o.key} className="organ-card" onClick={() => goToOrgan(o.key)}>
+        <div className="organ-icon" aria-hidden>🧬</div>
+        <div className="organ-title">{o.label}</div>
+        <div className="organ-count">{countBy('organs', o.key)} options</div>
+      </button>
+    ))}
+  </div>
+</section>
+
+{/* ===================== Search by Concern / Life Stage ===================== */}
+<section className="facet-section">
+  <div className="facet-header">
+    <h2>Search by Concern / Life Stage</h2>
+    <p className="facet-subtext">Find tests tailored to your situation.</p>
+  </div>
+  <div className="chip-grid">
+    {CONCERNS.map(cn => (
+      <button key={cn.key} className="chip" onClick={() => goToConcern(cn.key)}>
+        <span className="chip-title">{cn.label}</span>
+        <span className="chip-count">{countBy('concerns', cn.key)}</span>
+      </button>
+    ))}
+  </div>
+</section>
+
+{/* ===================== Seasonal / Trending Tests ===================== */}
+<section className="facet-section">
+  <div className="facet-header">
+    <h2>Seasonal / Trending Tests</h2>
+    <p className="facet-subtext">Stay ahead of seasonal risks and trending health checks.</p>
+  </div>
+
+  <div className="chip-row">
+    {SEASONS.map(s => (
+      <button key={s.key} className="chip small" onClick={() => goToSeason(s.key)}>
+        <span className="chip-title">{s.label}</span>
+      </button>
+    ))}
+  </div>
+
+  <div className="test-grid compact" style={{ marginTop: 16 }}>
+    {TRENDING.map(test => (
+      <TestCard
+        key={test.id}
+        test={test}
+        onAddToCart={handleAddToCart}
+        onDetailsClick={handleDetailsClick}
+        variant="compact"
+      />
+    ))}
+  </div>
+
+  <div className="view-all-link" style={{ marginTop: 12 }}>
+    <span onClick={() => navigate('/tests')}>View All {MOCK_TESTS.length} Tests & Packages →</span>
+  </div>
+</section>
+
 
 
       
